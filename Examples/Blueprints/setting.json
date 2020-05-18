@@ -1,0 +1,32 @@
+﻿{
+  "workspacedir": "",
+  "confignode": [
+    {
+      "name": "技能入口",
+      "type": 1,
+      "comment": "",
+      "outputs": [
+        {
+          "name": "入口",
+          "type": 0,
+          "comment": ""
+        }
+      ]
+    },
+    {
+      "name": "串行",
+      "type": 100,
+      "comment": "会依次执行节点，直到最后一个节点返回是退出",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        }
+      ],
+      "outputs": [
+        
+      ]
+    }
+  ]
+}
