@@ -25,7 +25,234 @@
         }
       ],
       "outputs": [
-        
+
+      ]
+    },
+    {
+      "name": "并行",
+      "type": 101,
+      "comment": "会触发脉冲时全部执行子节点，知道全部字节的返回时退出",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "name": "分支选择",
+      "type": 103,
+      "comment": "分支节点判断condition，真执行trueflow，假执行falseflow",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "条件|condition",
+          "type": 1,
+          "comment": "条件检测"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "真|trueflow",
+          "type": 0,
+          "comment": "条件为真时，执行这个分支"
+        },
+        {
+          "name": "假|falseflow",
+          "type": 0,
+          "comment": "条件为假时，执行这个分支"
+        }
+      ]
+    },
+    {
+      "name": "监听分支",
+      "type": 104,
+      "comment": "安装事件监听，执行该节点时开始注册listen，退出该节点时remove listen，事件触发时执行事件分支",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "监听|event",
+          "type": 4,
+          "comment": "监听的事件名称"
+        },
+        {
+          "name": "绑定的对象|inst|0",
+          "type": 5,
+          "comment": "监听事件对象如果没有连线，则是技能施法者"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "|flow",
+          "type": 0,
+          "comment": "输出脉冲"
+        },
+        {
+          "name": "事件出口|eventflow",
+          "type": 7,
+          "comment": "事件分支"
+        }
+      ]
+    },
+    {
+      "name": "重复",
+      "type": 200,
+      "comment": "执行次数1+次子节点",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "次数|count",
+          "type": 2,
+          "comment": "重复的次数"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "|flow",
+          "type": 0,
+          "comment": "子分支"
+        }
+      ]
+    },
+    {
+      "name": "等待",
+      "type": 201,
+      "comment": "等待x(s)， 然后执行子节点",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "等待时长(s)|wait",
+          "type": 3,
+          "comment": "等待时间，单位(s)"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "|flow",
+          "type": 0,
+          "comment": "子节点"
+        }
+      ]
+    },
+    {
+      "name": "事件等待",
+      "type": 202,
+      "comment": "等待事件触发在退出",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "事件名称|event",
+          "type": 4,
+          "comment": "要监听的事件"
+        },
+        {
+          "name": "生物|inst|0",
+          "type": 5,
+          "comment": "绑定的生物，如果没有连线就是施法者"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "|flow",
+          "type": 0,
+          "comment": "子节点"
+        }
+      ]
+    },
+    {
+      "name": "事件适配器",
+      "type": 203,
+      "comment": "由事件监听节点出口的子节点，用来萃取事件data的参数",
+      "inputs": [
+        {
+          "name": "",
+          "type": 7,
+          "comment": "事件触发后入口节点"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "|flow",
+          "type": 0,
+          "comment": "子节点"
+        },
+        {
+          "name": "事件数据(data)",
+          "type": 5,
+          "comment": "由listenforevent执行函数的data"
+        }
+      ]
+    },
+    {
+      "name": "记录日志&Echo",
+      "type": 300,
+      "comment": "技能动作节点",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "Entity",
+          "type": 5,
+          "comment": "绑定的生物，默认(施法者)"
+        },
+        {
+          "name": "Message",
+          "type": 4,
+          "comment": "要记录到日志的字符串"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "name": "播放动画&PlayAnim",
+      "type": 300,
+      "comment": "播放动画",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "进入脉冲"
+        },
+        {
+          "name": "Entity",
+          "type": 5,
+          "comment": "绑定的生物，默认(施法者)"
+        },
+        {
+          "name": "动画名称",
+          "type": 4,
+          "comment": "要播放动画的动画名称"
+        },
+        {
+          "name": "是否循环播放",
+          "type": 1,
+          "comment": "是否循环播放",
+        }
       ]
     }
   ]
