@@ -9,9 +9,12 @@
 #include <ax/Builders.h>
 #include <ax/Widgets.h>
 #include "pmvcpp.h"
+#include "controller/startup.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
+
+using namespace PureMVC;
 
 static inline ImRect ImGui_GetItemRect()
 {
@@ -293,6 +296,9 @@ void Application_Initialize()
     s_HeaderBackground = Application_LoadTexture("Data/BlueprintBackground.png");
     s_SaveIcon         = Application_LoadTexture("Data/ic_save_white_24dp.png");
     s_RestoreIcon      = Application_LoadTexture("Data/ic_restore_white_24dp.png");
+
+	Facade* facade = Facade::getInstance("root");
+	facade->registerCommand<startup>("startup");
 }
 
 void Application_Finalize()
