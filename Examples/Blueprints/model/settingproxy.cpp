@@ -1,10 +1,10 @@
 
-#include "settingproxy.h"
-#include <iostream>
-#include <rapidjson/document.h>
-#include <fstream>
 #include "utiliti.h"
+#include "settingproxy.h"
+#include <fstream>
+#include <rapidjson/document.h>
 
+std::string settingproxy::NAME = "settingproxy";
 void settingproxy::onRegister()
 {
 	const char* filepath = "setting.json";
@@ -36,8 +36,12 @@ void settingproxy::onRegister()
 	auto& confignode = doc["confignode"];
 	for (auto it = confignode.Begin(); it != confignode.End(); ++it)
 	{
-
+		
 	}
 
-	this->setData(this);
+}
+
+void settingproxy::onRemove()
+{
+
 }

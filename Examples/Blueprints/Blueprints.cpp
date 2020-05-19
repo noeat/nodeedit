@@ -10,7 +10,9 @@
 #include <ax/Widgets.h>
 #include "pmvcpp.h"
 #include "controller/startup.h"
+#include "controller/setting.h"
 #include "common.h"
+#include "define.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
@@ -274,7 +276,9 @@ void Application_Initialize()
     s_RestoreIcon      = Application_LoadTexture("Data/ic_restore_white_24dp.png");
 
 	Facade* facade = Facade::getInstance("root");
-	//facade->registerCommand<startup>("startup");
+	facade->registerCommand<startup>(COMMANDTYPE::STARTUP);
+	facade->registerCommand<setting>(COMMANDTYPE::SETTING);
+	facade->sendNotification(COMMANDTYPE::STARTUP);
 }
 
 void Application_Finalize()
