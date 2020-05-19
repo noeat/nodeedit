@@ -1,5 +1,6 @@
 #include "startup.h"
 #include "model/settingproxy.h"
+#include "define.h"
 
 void startup::execute(PureMVC::INotification* note)
 {
@@ -9,6 +10,10 @@ void startup::execute(PureMVC::INotification* note)
 
 	if (setting->workspace() == "")
 	{
-		facade->re
+		facade->sendNotification(COMMANDTYPE::SETTING);
+	}
+	else
+	{
+
 	}
 }

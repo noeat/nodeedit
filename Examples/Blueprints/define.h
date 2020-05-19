@@ -1,15 +1,42 @@
 #pragma once
+enum class PinType
+{
+	Flow,
+	Bool,
+	Int,
+	Float,
+	String,
+	Object,
+	Function,
+	Delegate,
+};
 
-enum COMMANDTYPE
+enum class PinKind
+{
+	Output,
+	Input
+};
+
+enum class NodeType
+{
+	Blueprint,
+	Simple,
+	Tree,
+	Comment,
+	Houdini
+};
+
+
+enum COMMANDTYPE 
 {
 	NONE,
 	STARTUP,
 	SETTING,
 };
 
-enum NODETYPE
+enum NODETYPE 
 {
-	NONE,
+	NODETYPE_NONE,
 	ENTRY,
 	SEQUENCE = 100,
 	PARALLEL = 101,
@@ -21,3 +48,9 @@ enum NODETYPE
 	EVENTADPTOR = 203,
 	ACTION = 300,
 };
+
+#define UISTR_LEN 256
+typedef char ui_string[UISTR_LEN];
+
+#include "imgui_node_editor.h"
+namespace ed = ax::NodeEditor;

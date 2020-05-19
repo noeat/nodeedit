@@ -1,28 +1,9 @@
 #pragma once
-enum class PinType
-{
-	Flow,
-	Bool,
-	Int,
-	Float,
-	String,
-	Object,
-	Function,
-	Delegate,
-};
+#include "define.h"
+#include <string>
+#include <string.h>
 
-enum class PinKind
+inline void set_ui_str(ui_string& dest, const char* src)
 {
-	Output,
-	Input
-};
-
-enum class NodeType
-{
-	Blueprint,
-	Simple,
-	Tree,
-	Comment,
-	Houdini
-};
-
+	strncpy_s(dest, src, UISTR_LEN);
+}
