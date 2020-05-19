@@ -10,6 +10,7 @@
 #include <ax/Widgets.h>
 #include "pmvcpp.h"
 #include "controller/startup.h"
+#include "common.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
@@ -39,32 +40,7 @@ using namespace ax;
 using ax::Widgets::IconType;
 
 static ed::EditorContext* m_Editor = nullptr;
-enum class PinType
-{
-    Flow,
-    Bool,
-    Int,
-    Float,
-    String,
-    Object,
-    Function,
-    Delegate,
-};
 
-enum class PinKind
-{
-    Output,
-    Input
-};
-
-enum class NodeType
-{
-    Blueprint,
-    Simple,
-    Tree,
-    Comment,
-    Houdini
-};
 
 struct Node;
 
@@ -298,7 +274,7 @@ void Application_Initialize()
     s_RestoreIcon      = Application_LoadTexture("Data/ic_restore_white_24dp.png");
 
 	Facade* facade = Facade::getInstance("root");
-	facade->registerCommand<startup>("startup");
+	//facade->registerCommand<startup>("startup");
 }
 
 void Application_Finalize()
