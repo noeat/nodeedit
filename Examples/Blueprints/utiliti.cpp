@@ -92,3 +92,9 @@ tokenizer::tokenizer(const std::string &src, const char sep, int vectorReserve /
 		++posnew;
 	}
 }
+
+int GenID()
+{
+	static int s_id = 0;
+	return ++s_id;
+}

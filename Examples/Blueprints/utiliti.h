@@ -3,6 +3,7 @@
 void FatalError(const char* format, ...);
 void LogMessage(const char* format, ...);
 void Flush();
+int GenID();
 
 
 #include <vector>

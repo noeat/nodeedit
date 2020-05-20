@@ -4,10 +4,11 @@
 class entrynode : public basenodeproxy
 {
 public:
-	void initlize(rapidjson::Value& config);
-	entrynode* clone();
-	void onRegister();
-	void onRemove();
+	~entrynode() override {}
+	void initlize(rapidjson::Value& config) override;
+	entrynode* clone() override {};
+	void onRegister() override {};
+	void onRemove() override {};
 private:
 
 };

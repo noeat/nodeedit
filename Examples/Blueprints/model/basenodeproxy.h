@@ -6,6 +6,7 @@
 class basenodeproxy : PureMVC::Proxy
 {
 public:
+	~basenodeproxy() {}
 	virtual basenodeproxy* clone() = 0;
 	virtual void initlize(rapidjson::Value& config);
 

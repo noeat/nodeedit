@@ -11,6 +11,8 @@
 #include "pmvcpp.h"
 #include "controller/startup.h"
 #include "controller/setting.h"
+#include "controller/closestyle.h"
+#include "controller/showstyle.h"
 #include "common.h"
 #include "define.h"
 
@@ -278,6 +280,8 @@ void Application_Initialize()
 	Facade* facade = Facade::getInstance("root");
 	facade->registerCommand<startup>(COMMANDTYPE::STARTUP);
 	facade->registerCommand<setting>(COMMANDTYPE::SETTING);
+	facade->registerCommand<closestylecmd>(COMMANDTYPE::CLOSESTYLE);
+	facade->registerCommand<showstylecmd>(COMMANDTYPE::OPENSTYLE);
 	facade->sendNotification(COMMANDTYPE::STARTUP);
 }
 
@@ -353,111 +357,6 @@ void DrawPinIcon(const Pin& pin, bool connected, int alpha)
     ax::Widgets::Icon(ImVec2(s_PinIconSize, s_PinIconSize), iconType, connected, color, ImColor(32, 32, 32, alpha));
 };
 
-void ShowStyleEditor(bool* show = nullptr)
-{
-    if (!ImGui::Begin("Style", show))
-    {
-        ImGui::End();
-        return;
-    }
-
-    auto paneWidth = ImGui::GetContentRegionAvailWidth();
-
-    auto& editorStyle = ed::GetStyle();
-    ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
-    ImGui::TextUnformatted("Values");
-    ImGui::Spring();
-    if (ImGui::Button("Reset to defaults"))
-        editorStyle = ed::Style();
-    ImGui::EndHorizontal();
-    ImGui::Spacing();
-    ImGui::DragFloat4("Node Padding", &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
-    ImGui::DragFloat("Node Rounding", &editorStyle.NodeRounding, 0.1f, 0.0f, 40.0f);
-    ImGui::DragFloat("Node Border Width", &editorStyle.NodeBorderWidth, 0.1f, 0.0f, 15.0f);
-    ImGui::DragFloat("Hovered Node Border Width", &editorStyle.HoveredNodeBorderWidth, 0.1f, 0.0f, 15.0f);
-    ImGui::DragFloat("Selected Node Border Width", &editorStyle.SelectedNodeBorderWidth, 0.1f, 0.0f, 15.0f);
-    ImGui::DragFloat("Pin Rounding", &editorStyle.PinRounding, 0.1f, 0.0f, 40.0f);
-    ImGui::DragFloat("Pin Border Width", &editorStyle.PinBorderWidth, 0.1f, 0.0f, 15.0f);
-    ImGui::DragFloat("Link Strength", &editorStyle.LinkStrength, 1.0f, 0.0f, 500.0f);
-    //ImVec2  SourceDirection;
-    //ImVec2  TargetDirection;
-    ImGui::DragFloat("Scroll Duration", &editorStyle.ScrollDuration, 0.001f, 0.0f, 2.0f);
-    ImGui::DragFloat("Flow Marker Distance", &editorStyle.FlowMarkerDistance, 1.0f, 1.0f, 200.0f);
-    ImGui::DragFloat("Flow Speed", &editorStyle.FlowSpeed, 1.0f, 1.0f, 2000.0f);
-    ImGui::DragFloat("Flow Duration", &editorStyle.FlowDuration, 0.001f, 0.0f, 5.0f);
-    //ImVec2  PivotAlignment;
-    //ImVec2  PivotSize;
-    //ImVec2  PivotScale;
-    //float   PinCorners;
-    //float   PinRadius;
-    //float   PinArrowSize;
-    //float   PinArrowWidth;
-    ImGui::DragFloat("Group Rounding", &editorStyle.GroupRounding, 0.1f, 0.0f, 40.0f);
-    ImGui::DragFloat("Group Border Width", &editorStyle.GroupBorderWidth, 0.1f, 0.0f, 15.0f);
-
-    ImGui::Separator();
-
-    static ImGuiColorEditFlags edit_mode = ImGuiColorEditFlags_RGB;
-    ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0f);
-    ImGui::TextUnformatted("Filter Colors");
-    ImGui::Spring();
-    ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_RGB);
-    ImGui::Spring(0);
-    ImGui::RadioButton("HSV", &edit_mode, ImGuiColorEditFlags_HSV);
-    ImGui::Spring(0);
-    ImGui::RadioButton("HEX", &edit_mode, ImGuiColorEditFlags_HEX);
-    ImGui::EndHorizontal();
-
-    static ImGuiTextFilter filter;
-    filter.Draw("", paneWidth);
-
-    ImGui::Spacing();
-
-    ImGui::PushItemWidth(-160);
-    for (int i = 0; i < ed::StyleColor_Count; ++i)
-    {
-        auto name = ed::GetStyleColorName((ed::StyleColor)i);
-        if (!filter.PassFilter(name))
-            continue;
-
-        ImGui::ColorEdit4(name, &editorStyle.Colors[i].x, edit_mode);
-    }
-    ImGui::PopItemWidth();
-
-    ImGui::End();
-}
-
-void ShowLeftPane(float paneWidth)
-{
-    auto& io = ImGui::GetIO();
-
-    ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
-
-    paneWidth = ImGui::GetContentRegionAvailWidth();
-
-    static bool showStyleEditor = false;
-    ImGui::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
-    ImGui::Spring(0.0f, 0.0f);
-    if (ImGui::Button("Zoom to Content"))
-        ed::NavigateToContent();
-    ImGui::Spring(0.0f);
-    if (ImGui::Button("Show Flow"))
-    {
-        for (auto& link : s_Links)
-            ed::Flow(link.ID);
-    }
-    ImGui::Spring();
-    if (ImGui::Button("Edit Style"))
-        showStyleEditor = true;
-    ImGui::EndHorizontal();
-
-    if (showStyleEditor)
-        ShowStyleEditor(&showStyleEditor);
-
-  
-    ImGui::EndChild();
-}
-
 void Application_Frame()
 {
     UpdateTouch();
@@ -471,9 +370,9 @@ void Application_Frame()
     static float leftPaneWidth  = 400.0f;
     static float rightPaneWidth = 800.0f;
     Splitter(true, 4.0f, &leftPaneWidth, &rightPaneWidth, 50.0f, 50.0f);
-
-    ShowLeftPane(leftPaneWidth - 4.0f);
-
+	float leftpane = leftPaneWidth - 4.0;
+	Facade* facade = Facade::getInstance("root");
+	facade->sendNotification(COMMANDTYPE::DISPLAYLEFTPANE, (void*)&leftpane);
     ImGui::SameLine(0.0f, 12.0f);
 
     ed::Begin("Node editor");
