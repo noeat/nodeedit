@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdint.h>
 #include "pmvcpp.h"
+#include <assert.h>
 
 using namespace PureMVC;
 //--------------------------------------
@@ -354,11 +355,22 @@ IMediator* View::removeMediator( std::string mediatorName )
     if(interests.size() > (size_t) 0)
     {
         std::vector<std::string>::iterator it;
+		Observer<IMediator>* observer = nullptr;
         for (int i = 0; i < (int) interests.size(); i++)
         {
             // remove the mediator's observer functor listed for this notification
-            delete this->removeObserver(interests[i], (intptr_t) &*mediator);
+			auto ob = this->removeObserver(interests[i], (intptr_t) &*mediator);
+			if (observer == nullptr) 
+			{
+				observer = dynamic_cast<Observer<IMediator>*>(ob);
+			}
+			else
+			{
+				assert(observer == dynamic_cast<Observer<IMediator>*>(ob));
+			}
         }
+
+		delete observer;
     }
     // remove the mediator from the map
     this->mediatorMap.erase(mediatorName);

@@ -12,7 +12,7 @@ styleeditormediator::styleeditormediator()
 
 std::vector<int> styleeditormediator::listNotificationInterests()
 {
-	return std::vector<int>{COMMANDTYPE::DISPLAYLEFTPANE, COMMANDTYPE::SHOWSTYPE};
+	return std::vector<int>{COMMANDTYPE::DISPLAYLEFTPANE, COMMANDTYPE::SHOWSTYPE, COMMANDTYPE::CHECKSTYLECLOSE};
 }
 
 void styleeditormediator::handleNotification(PureMVC::INotification* notification)
@@ -27,6 +27,17 @@ void styleeditormediator::handleNotification(PureMVC::INotification* notificatio
 	else if (name == COMMANDTYPE::SHOWSTYPE)
 	{
 		this->showstyle_ = (bool*)body;
+	}
+	else if (name == COMMANDTYPE::CHECKSTYLECLOSE)
+	{
+		if (this->showstyle_)
+		{
+			if (!*this->showstyle_)
+			{
+				PureMVC::IFacade* facade = this->getFacade();
+				facade->sendNotification(COMMANDTYPE::CLOSESTYLE);
+			}
+		}
 	}
 }
 

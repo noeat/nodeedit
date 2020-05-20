@@ -18,6 +18,5 @@ public:
 
 	static const std::string NAME;
 
-private:
-	bool* showstyle_;
+
 };

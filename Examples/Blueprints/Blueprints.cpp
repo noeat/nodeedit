@@ -373,6 +373,7 @@ void Application_Frame()
 	float leftpane = leftPaneWidth - 4.0;
 	Facade* facade = Facade::getInstance("root");
 	facade->sendNotification(COMMANDTYPE::DISPLAYLEFTPANE, (void*)&leftpane);
+	facade->sendNotification(COMMANDTYPE::CHECKSTYLECLOSE);
     ImGui::SameLine(0.0f, 12.0f);
 
     ed::Begin("Node editor");
