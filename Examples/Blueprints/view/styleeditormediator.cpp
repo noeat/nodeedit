@@ -34,8 +34,7 @@ void styleeditormediator::show()
 {
 	PureMVC::IFacade* facade = this->getFacade();
 	if (!ImGui::Begin("Style", this->showstyle_))
-	{
-		facade->sendNotification(COMMANDTYPE::CLOSESTYLE);
+	{		
 		ImGui::End();
 		return;
 	}

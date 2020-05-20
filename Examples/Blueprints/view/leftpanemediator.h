@@ -17,4 +17,7 @@ public:
 	virtual void onRemove() override;
 
 	static const std::string NAME;
+
+private:
+	bool* showstyle_;
 };
