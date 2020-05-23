@@ -8,4 +8,6 @@ void entrynode::initlize(rapidjson::Value& config)
 	basenodeproxy::initlize(config);
 	assert(this->type_ == NODETYPE::ENTRY);
 
+	
+
 }

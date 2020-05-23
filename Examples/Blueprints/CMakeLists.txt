@@ -3,7 +3,7 @@ macro(GroupSources dir)
   # Skip this if WITH_SOURCE_TREE is not set (empty string).
   if (NOT ${WITH_SOURCE_TREE} STREQUAL "")
     # Include all header and c files
-    file(GLOB_RECURSE elements RELATIVE ${dir} *.h *.hpp *.c *.cpp *.cc)
+    file(GLOB_RECURSE elements RELATIVE ${dir} *.h *.hpp *.c *.cpp *.cc *.json)
 
     foreach(element ${elements})
       # Extract filename and directory
@@ -56,7 +56,8 @@ function(CollectSourceFiles current_dir variable)
       ${current_dir}/*.def
       ${current_dir}/*.h
       ${current_dir}/*.hh
-      ${current_dir}/*.hpp)
+      ${current_dir}/*.hpp
+	  ${current_dir}/*.json)
     list(APPEND ${variable} ${COLLECTED_SOURCES})
 
     file(GLOB SUB_DIRECTORIES ${current_dir}/*)

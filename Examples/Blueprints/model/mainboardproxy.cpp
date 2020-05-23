@@ -9,6 +9,7 @@ mainboardproxy::mainboardproxy()
 
 void mainboardproxy::onRegister()
 {
+	this->next_ = 0;
 	this->showstyleeditor_ = false;
 	this->setData(this);
 }

@@ -2,7 +2,7 @@
   "workspacedir": "",
   "confignode": [
     {
-      "name": "技能入口",
+      "name": "技能",
       "type": 1,
       "comment": "",
       "outputs": [
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "name": "记录日志&Echo",
+      "name": "记录日志##Echo",
       "type": 300,
       "comment": "技能动作节点",
       "inputs": [
@@ -229,7 +229,7 @@
       "outputs": []
     },
     {
-      "name": "播放动画&PlayAnim",
+      "name": "播放动画##PlayAnim",
       "type": 300,
       "comment": "播放动画",
       "inputs": [

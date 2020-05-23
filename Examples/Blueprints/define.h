@@ -39,6 +39,11 @@ enum COMMANDTYPE
 	CLOSESTYLE,
 	SHOWSTYPE,
 	CHECKSTYLECLOSE,
+	LAODING,
+	DISPLAYMAIN,
+	MAINMENU,
+	DISPLAYMAINMENU,
+	MAINMENUCLICK,
 };
 
 enum NODETYPE 
@@ -59,5 +64,22 @@ enum NODETYPE
 #define UISTR_LEN 256
 typedef char ui_string[UISTR_LEN];
 
+#include <vector>
 #include "imgui_node_editor.h"
 namespace ed = ax::NodeEditor;
+
+struct ConfPin
+{
+	std::string		name;
+	int				type;
+	std::string		comment;
+};
+
+struct ConfNode
+{
+	std::string		name;
+	int				type;
+	std::string		comment;
+	std::vector<ConfPin> inputs;
+	std::vector<ConfPin> outputs;
+};
