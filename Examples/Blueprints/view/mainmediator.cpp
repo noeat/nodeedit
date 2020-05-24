@@ -2,9 +2,20 @@
 #include "define.h"
 #include "imgui_node_editor.h"
 #include "model/language.h"
-#include <shlobj.h>
-#include <filesystem>
+#include "model/mainboardproxy.h"
+#include "Application.h"
+#include <ax/Builders.h>
+
 const std::string mainmediator::NAME = "mainmediator";
+
+namespace util = ax::NodeEditor::Utilities;
+static const int            s_PinIconSize = 24;
+static ImTextureID          s_HeaderBackground = nullptr;
+//static ImTextureID          s_SampleImage = nullptr;
+static ImTextureID          s_SaveIcon = nullptr;
+static ImTextureID          s_RestoreIcon = nullptr;
+
+
 
 mainmediator::mainmediator()
 	:PureMVC::Mediator(mainmediator::NAME)
@@ -24,6 +35,19 @@ void mainmediator::handleNotification(PureMVC::INotification* notification)
 	ed::Begin("Node editor");
 	{
 		auto cursorTopLeft = ImGui::GetCursorScreenPos();		
+		util::BlueprintNodeBuilder builder(s_HeaderBackground, Application_GetTextureWidth(s_HeaderBackground), Application_GetTextureHeight(s_HeaderBackground));
+
+		mainboardproxy* maindata = dynamic_cast<mainboardproxy*>(
+			facade->retrieveProxy(mainboardproxy::NAME));
+		assert(maindata);
+		for (auto iter = maindata->nodes().begin(); iter != maindata->nodes().end(); ++iter)
+		{
+			if (iter->second->show)
+			{
+				auto item = std::make_pair(&builder, iter->second);
+				facade->sendNotification(COMMANDTYPE::DISPLAYNODE + iter->first, &item);
+			}
+		}
 
 		ImGui::SetCursorScreenPos(cursorTopLeft);
 	}
@@ -40,17 +64,30 @@ void mainmediator::handleNotification(PureMVC::INotification* notification)
 	{
 		facade->sendNotification(COMMANDTYPE::MAINMENU);
 	}
-	ed::End();
 
+	ed::End();
 }
 
 
 void mainmediator::onRegister()
 {
-	
+	s_HeaderBackground = Application_LoadTexture("Data/BlueprintBackground.png");
+	s_SaveIcon = Application_LoadTexture("Data/ic_save_white_24dp.png");
+	s_RestoreIcon = Application_LoadTexture("Data/ic_restore_white_24dp.png");
 }
 
 void mainmediator::onRemove()
 {
-	
+	auto releaseTexture = [](ImTextureID& id)
+	{
+		if (id)
+		{
+			Application_DestroyTexture(id);
+			id = nullptr;
+		}
+	};
+
+	releaseTexture(s_RestoreIcon);
+	releaseTexture(s_SaveIcon);
+	releaseTexture(s_HeaderBackground);
 }

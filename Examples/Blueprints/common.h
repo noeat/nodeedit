@@ -12,3 +12,8 @@ inline void set_ui_str(ui_string& dest, const std::string& src)
 {
 	set_ui_str(dest, src.c_str());
 }
+
+inline std::string id2mediatorname(int id)
+{
+	return std::string("mediator_") + std::to_string(id);
+}

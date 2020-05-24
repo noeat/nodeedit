@@ -3,11 +3,14 @@
 #include "common.h"
 #include "utiliti.h"
 
-void entrynode::initlize(rapidjson::Value& config)
+entrynode::entrynode(int id)
+	:basenodeproxy(id)
 {
-	basenodeproxy::initlize(config);
+
+}
+
+void entrynode::initlize(const ConfNode* node)
+{
+	basenodeproxy::initlize(node);
 	assert(this->type_ == NODETYPE::ENTRY);
-
-	
-
 }

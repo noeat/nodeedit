@@ -44,6 +44,7 @@ enum COMMANDTYPE
 	MAINMENU,
 	DISPLAYMAINMENU,
 	MAINMENUCLICK,
+	DISPLAYNODE = 1000,
 };
 
 enum NODETYPE 
@@ -66,6 +67,7 @@ typedef char ui_string[UISTR_LEN];
 
 #include <vector>
 #include "imgui_node_editor.h"
+#include <variant>
 namespace ed = ax::NodeEditor;
 
 struct ConfPin
@@ -82,4 +84,38 @@ struct ConfNode
 	std::string		comment;
 	std::vector<ConfPin> inputs;
 	std::vector<ConfPin> outputs;
+};
+
+union Value
+{
+	int int_;
+	double double_;
+	ui_string str_;
+};
+
+
+struct Node;
+struct Pin
+{
+	ed::PinId id;
+	::Node*   node;
+	ui_string name;
+	ui_string comment;
+	PinType   type;
+	PinKind   kind;
+	Value	 value;
+	std::vector<Pin*> links;
+};
+
+struct Node
+{
+	ed::NodeId id;
+	ui_string  name;
+	ui_string  comment;
+	ImColor    color;
+	int		   type;
+	ImVec2	   size;
+	bool	   show;
+	std::vector<Pin> inputs;
+	std::vector<Pin> outputs;
 };

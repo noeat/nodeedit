@@ -4,13 +4,13 @@
 class entrynode : public basenodeproxy
 {
 public:
-	entrynode() {};
+	entrynode(int id);
 	~entrynode() override {}
-	void initlize(rapidjson::Value& config) override;
+	void initlize(const ConfNode* node) override;
 	entrynode* clone() override { return nullptr; };
 	void onRegister() override {};
 	void onRemove() override {};
 private:
-	ed::PinId flow;
-	
+	ed::PinId pin_;
+
 };

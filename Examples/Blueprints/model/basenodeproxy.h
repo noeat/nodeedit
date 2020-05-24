@@ -6,10 +6,10 @@
 class basenodeproxy : PureMVC::Proxy
 {
 public:
-	basenodeproxy() {};
+	basenodeproxy(int id);
 	~basenodeproxy() {}
 	virtual basenodeproxy* clone() = 0;
-	virtual void initlize(rapidjson::Value& config);
+	virtual void initlize(const ConfNode* node);
 
 	ed::NodeId id() const { return ID_; }
 
