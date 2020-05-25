@@ -116,6 +116,7 @@ struct Node
 	int		   type;
 	ImVec2	   size;
 	bool	   show;
+	ImVec2	   position;
 	std::vector<Pin> inputs;
 	std::vector<Pin> outputs;
 };

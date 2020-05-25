@@ -13,7 +13,7 @@ public:
 	bool& showstyleeditor() { return showstyleeditor_; }
 	bool showstyleeditor() const { return showstyleeditor_; }
 
-	Node* addnode(const ConfNode* conf);
+	Node* addnode(const ConfNode* conf, const ImVec2& pos);
 
 	int next() const { return ++this->next_; }
 	const static std::string NAME;

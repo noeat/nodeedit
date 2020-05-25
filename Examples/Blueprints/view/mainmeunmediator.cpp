@@ -62,7 +62,11 @@ void mainmeunmediator::handleNotification(PureMVC::INotification* notification)
 			}
 
 			if (ImGui::MenuItem(item->name.c_str()))
-				this->sendNotification(COMMANDTYPE::MAINMENUCLICK, (void*)item);
+			{
+				auto data = std::make_pair(item, &openPopupPosition);
+				this->sendNotification(COMMANDTYPE::MAINMENUCLICK, (void*)&data);
+			}
+				
 			if (!item->comment.empty())
 			{
 				ImGui::SameLine();
@@ -77,7 +81,11 @@ void mainmeunmediator::handleNotification(PureMVC::INotification* notification)
 			{
 				auto item = (*data)[index];
 				if (ImGui::MenuItem(item->name.c_str()))
-					this->sendNotification(COMMANDTYPE::MAINMENUCLICK, (void*)item);
+				{
+					auto data = std::make_pair(item, &openPopupPosition);
+					this->sendNotification(COMMANDTYPE::MAINMENUCLICK, (void*)&data);
+				}
+					
 				if (!item->comment.empty())
 				{
 					ImGui::SameLine();

@@ -8,14 +8,13 @@
 void mainmenuclick::execute(PureMVC::INotification* note)
 {
 	PureMVC::IFacade *facade = this->getFacade();
-	ConfNode* node = (ConfNode*)note->getBody();
-	
+	std::pair<ConfNode*, ImVec2*>* data = (std::pair<ConfNode*, ImVec2*>*)note->getBody();	
 	mainboardproxy* proxy = dynamic_cast<mainboardproxy*>(
 		facade->retrieveProxy(mainboardproxy::NAME));
 	assert(proxy);
-	Node* n = proxy->addnode(node);
+	Node* n = proxy->addnode(data->first, *data->second);
 	PureMVC::Mediator* mediator = nullptr;
-	switch (node->type)
+	switch (data->first->type)
 	{
 	case NODETYPE::ENTRY:
 		mediator = new entrymediator(n->id.Get());
@@ -26,6 +25,7 @@ void mainmenuclick::execute(PureMVC::INotification* note)
 
 	if (mediator != nullptr)
 	{
+		ed::SetNodePosition(n->id, n->position);
 		facade->registerMediator(mediator);
 	}
 }

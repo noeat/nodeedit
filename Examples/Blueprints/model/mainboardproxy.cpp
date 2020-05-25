@@ -20,7 +20,7 @@ void mainboardproxy::onRemove()
 
 }
 
-Node* mainboardproxy::addnode(const ConfNode* conf)
+Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 {
 	Node* node = new Node();
 	node->id = this->next();
@@ -28,6 +28,7 @@ Node* mainboardproxy::addnode(const ConfNode* conf)
 	set_ui_str(node->comment, conf->comment);
 	node->type = conf->type;
 	node->show = true;
+	node->position = pos;
 	for (auto& item : conf->inputs)
 	{
 		Pin pin;
