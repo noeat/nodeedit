@@ -4,8 +4,47 @@
 #include "model/language.h"
 #include "common.h"
 #include <ax/Builders.h>
+#include <ax/Widgets.h>
+#include <ax/Drawing.h>
 namespace util = ax::NodeEditor::Utilities;
+static const int            s_PinIconSize = 14;
+ImColor GetIconColor(PinType type)
+{
+	switch (type)
+	{
+	default:
+	case PinType::Flow:     return ImColor(255, 255, 255);
+	case PinType::Bool:     return ImColor(220, 48, 48);
+	case PinType::Int:      return ImColor(68, 201, 156);
+	case PinType::Float:    return ImColor(147, 226, 74);
+	case PinType::String:   return ImColor(124, 21, 153);
+	case PinType::Object:   return ImColor(51, 150, 215);
+	case PinType::Function: return ImColor(218, 0, 183);
+	case PinType::Delegate: return ImColor(255, 48, 48);
+	}
+};
 
+void DrawPinIcon(const Pin& pin, bool connected, int alpha)
+{
+	ax::Drawing::IconType iconType;
+	ImColor  color = GetIconColor(pin.type);
+	color.Value.w = alpha / 255.0f;
+	switch (pin.type)
+	{
+	case PinType::Flow:     iconType = ax::Drawing::IconType::Flow;   break;
+	case PinType::Bool:     iconType = ax::Drawing::IconType::Circle; break;
+	case PinType::Int:      iconType = ax::Drawing::IconType::Circle; break;
+	case PinType::Float:    iconType = ax::Drawing::IconType::Circle; break;
+	case PinType::String:   iconType = ax::Drawing::IconType::Circle; break;
+	case PinType::Object:   iconType = ax::Drawing::IconType::Circle; break;
+	case PinType::Function: iconType = ax::Drawing::IconType::Circle; break;
+	case PinType::Delegate: iconType = ax::Drawing::IconType::Square; break;
+	default:
+		return;
+	}
+
+	ax::Widgets::Icon(ImVec2(s_PinIconSize, s_PinIconSize), iconType, connected, color, ImColor(32, 32, 32, alpha));
+};
 entrymediator::entrymediator(int nodeid)
 	:PureMVC::Mediator(id2mediatorname(nodeid)), nodeid_(nodeid)
 {
@@ -15,6 +54,19 @@ entrymediator::entrymediator(int nodeid)
 std::vector<int> entrymediator::listNotificationInterests()
 {
 	return std::vector<int>{COMMANDTYPE::DISPLAYNODE + this->nodeid_};
+}
+
+static void HelpMarker(const char* desc)
+{
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
 }
 
 void entrymediator::handleNotification(PureMVC::INotification* notification)
@@ -28,87 +80,21 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 	builder->Begin(node->id);
 	builder->Header(node->color);
 	ImGui::Spring(0);
-	ImGui::TextUnformatted(node->name);
+	//ImGui::TextUnformatted(node->name);
+	ImGui::PushItemWidth(60);
+	ImGui::DragInt("", &node->skillid, 1, 0, 100000, node->name);
+	ImGui::PopItemWidth();
+	//HelpMarker(node->comment);
 	ImGui::Spring(1);
-	ImGui::Dummy(ImVec2(0, 28));
-	ImGui::Spring(0);
+	ImGui::Dummy(ImVec2(0, 14));
+	ImGui::Spring(2);
 	builder->EndHeader();
-
-	/*for (auto& input : node.Inputs)
-	{
-		auto alpha = ImGui::GetStyle().Alpha;
-		if (newLinkPin && !CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
-			alpha = alpha * (48.0f / 255.0f);
-
-		builder.Input(input.ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-		DrawPinIcon(input, IsPinLinked(input.ID), (int)(alpha * 255));
-		ImGui::Spring(0);
-		if (!input.Name.empty())
-		{
-			ImGui::TextUnformatted(input.Name.c_str());
-			ImGui::Spring(0);
-		}
-		if (input.Type == PinType::Bool)
-		{
-			ImGui::Button("Hello");
-			ImGui::Spring(0);
-		}
-		ImGui::PopStyleVar();
-		builder.EndInput();
-	}
-
-	if (isSimple)
-	{
-		builder.Middle();
-
-		ImGui::Spring(1, 0);
-		ImGui::TextUnformatted(node.Name.c_str());
-		ImGui::Spring(1, 0);
-	}
-
-	for (auto& output : node.Outputs)
-	{
-		if (!isSimple && output.Type == PinType::Delegate)
-			continue;
-
-		auto alpha = ImGui::GetStyle().Alpha;
-		if (newLinkPin && !CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
-			alpha = alpha * (48.0f / 255.0f);
-
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-		builder.Output(output.ID);
-		if (output.Type == PinType::String)
-		{
-			static char buffer[128] = "Edit Me\nMultiline!";
-			static bool wasActive = false;
-
-			ImGui::PushItemWidth(100.0f);
-			ImGui::InputText("##edit", buffer, 127);
-			ImGui::PopItemWidth();
-			if (ImGui::IsItemActive() && !wasActive)
-			{
-				ed::EnableShortcuts(false);
-				wasActive = true;
-			}
-			else if (!ImGui::IsItemActive() && wasActive)
-			{
-				ed::EnableShortcuts(true);
-				wasActive = false;
-			}
-			ImGui::Spring(0);
-		}
-		if (!output.Name.empty())
-		{
-			ImGui::Spring(0);
-			ImGui::TextUnformatted(output.Name.c_str());
-		}
-		ImGui::Spring(0);
-		DrawPinIcon(output, IsPinLinked(output.ID), (int)(alpha * 255));
-		ImGui::PopStyleVar();
-		builder.EndOutput();
-	}*/
-
+	auto alpha = ImGui::GetStyle().Alpha;	
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+	builder->Output(node->outputs[0].id);	
+	DrawPinIcon(node->outputs[0], false, (int)(alpha * 255));
+	ImGui::PopStyleVar();
+	builder->EndOutput();
 	builder->End();
 }
 

@@ -117,6 +117,7 @@ struct Node
 	ImVec2	   size;
 	bool	   show;
 	ImVec2	   position;
+	int		   skillid;
 	std::vector<Pin> inputs;
 	std::vector<Pin> outputs;
 };

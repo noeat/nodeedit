@@ -2,7 +2,7 @@
   "workspacedir": "",
   "confignode": [
     {
-      "name": "技能",
+      "name": "技能%d",
       "type": 1,
       "comment": "",
       "outputs": [
