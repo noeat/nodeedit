@@ -20,6 +20,10 @@ public:
 
 	const std::map<int, Node*>& nodes() const { return nodes_; }
 	const std::vector<Node*>& skills() const { return skills_; }
+
+	Node* getnode(int id) { return nodes_.find(id) == nodes_.end() ? nullptr : nodes_[id]; }
+	const Node* getnode(int id) const { return const_cast<mainboardproxy*>(this)->getnode(id); }
+
 private:
 	bool showstyleeditor_;
 	mutable int  next_;

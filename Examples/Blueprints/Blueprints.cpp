@@ -17,6 +17,7 @@
 #include "controller/display.h"
 #include "controller/mainmeun.h"
 #include "controller/mainmenuclick.h"
+#include "controller/addpin.h"
 #include "common.h"
 #include "define.h"
 
@@ -107,6 +108,7 @@ void Application_Initialize()
 	facade->registerCommand<display>(COMMANDTYPE::DISPLAY);
 	facade->registerCommand<mainmeun>(COMMANDTYPE::MAINMENU);
 	facade->registerCommand<mainmenuclick>(COMMANDTYPE::MAINMENUCLICK);
+	facade->registerCommand<addpin>(COMMANDTYPE::ADDPIN);
 	facade->sendNotification(COMMANDTYPE::STARTUP);
 }
 

@@ -4,7 +4,9 @@
 #include "define.h"
 #include "model/mainboardproxy.h"
 #include "view/entrymediator.h"
-
+#include "view/seqeuemediator.h"
+#include "view/conditionmediator.h"
+#include "view/listenmediator.h"
 void mainmenuclick::execute(PureMVC::INotification* note)
 {
 	PureMVC::IFacade *facade = this->getFacade();
@@ -18,6 +20,16 @@ void mainmenuclick::execute(PureMVC::INotification* note)
 	{
 	case NODETYPE::ENTRY:
 		mediator = new entrymediator(n->id.Get());
+		break;
+	case NODETYPE::SEQUENCE:
+	case NODETYPE::PARALLEL:
+		mediator = new seqeuemediator(n->id.Get());
+		break;
+	case NODETYPE::BRANCH:
+		mediator = new conditionmediator(n->id.Get());
+		break;
+	case NODETYPE::LISTEN:
+		mediator = new listenmediator(n->id.Get());
 		break;
 	default:
 		break;

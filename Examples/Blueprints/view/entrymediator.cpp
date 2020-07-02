@@ -56,19 +56,33 @@ std::vector<int> entrymediator::listNotificationInterests()
 	return std::vector<int>{COMMANDTYPE::DISPLAYNODE + this->nodeid_};
 }
 
+
 static void HelpMarker(const char* desc)
 {
 	ImGui::TextDisabled("(?)");
 	if (ImGui::IsItemHovered())
 	{
+		ed::Suspend();
 		ImGui::BeginTooltip();
 		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 		ImGui::TextUnformatted(desc);
 		ImGui::PopTextWrapPos();
-		ImGui::EndTooltip();
+		ImGui::EndTooltip(); ed::Resume();
 	}
 }
 
+static void HelpMarker2(const char* desc)
+{
+	if (ImGui::IsItemHovered())
+	{
+		ed::Suspend();
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip(); ed::Resume();
+	}
+}
 void entrymediator::handleNotification(PureMVC::INotification* notification)
 {
 	std::pair<util::BlueprintNodeBuilder*, Node*> *item = 
@@ -80,9 +94,12 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 	builder->Begin(node->id);
 	builder->Header(node->color);
 	ImGui::Spring(0);
+	//HelpMarker(node->comment);
 	//ImGui::TextUnformatted(node->name);
-	ImGui::PushItemWidth(60);
+	ImGui::PushItemWidth(30);
+	ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 	ImGui::DragInt("", &node->skillid, 1, 0, 100000, node->name);
+	ImGui::PopTextWrapPos();
 	ImGui::PopItemWidth();
 	//HelpMarker(node->comment);
 	ImGui::Spring(1);
@@ -93,6 +110,7 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
 	builder->Output(node->outputs[0].id);	
 	DrawPinIcon(node->outputs[0], false, (int)(alpha * 255));
+	//HelpMarker2(node->outputs[0].comment);
 	ImGui::PopStyleVar();
 	builder->EndOutput();
 	builder->End();

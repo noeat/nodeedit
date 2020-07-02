@@ -2,12 +2,12 @@
   "workspacedir": "",
   "confignode": [
     {
-      "name": "技能%d",
+      "name": "技能##%d",
       "type": 1,
       "comment": "",
       "outputs": [
         {
-          "name": "入口|flow",
+          "name": "入口##flow",
           "type": 0,
           "comment": ""
         }
@@ -52,19 +52,19 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "条件|condition",
+          "name": "条件##condition",
           "type": 1,
           "comment": "条件检测"
         }
       ],
       "outputs": [
         {
-          "name": "真|trueflow",
+          "name": "真##trueflow",
           "type": 0,
           "comment": "条件为真时，执行这个分支"
         },
         {
-          "name": "假|falseflow",
+          "name": "假##falseflow",
           "type": 0,
           "comment": "条件为假时，执行这个分支"
         }
@@ -81,24 +81,24 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "监听|event",
+          "name": "监听##event",
           "type": 4,
           "comment": "监听的事件名称"
         },
         {
-          "name": "绑定的对象|inst|0",
+          "name": "绑定的对象##inst##0",
           "type": 5,
           "comment": "监听事件对象如果没有连线，则是技能施法者"
         }
       ],
       "outputs": [
         {
-          "name": "|flow",
+          "name": "##flow",
           "type": 0,
           "comment": "输出脉冲"
         },
         {
-          "name": "事件出口|eventflow",
+          "name": "事件出口##eventflow",
           "type": 7,
           "comment": "事件分支"
         }
@@ -115,14 +115,14 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "次数|count",
+          "name": "次数##count",
           "type": 2,
           "comment": "重复的次数"
         }
       ],
       "outputs": [
         {
-          "name": "|flow",
+          "name": "##flow",
           "type": 0,
           "comment": "子分支"
         }
@@ -139,14 +139,14 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "等待时长(s)|wait",
+          "name": "等待时长(s)##wait",
           "type": 3,
           "comment": "等待时间，单位(s)"
         }
       ],
       "outputs": [
         {
-          "name": "|flow",
+          "name": "##flow",
           "type": 0,
           "comment": "子节点"
         }
@@ -163,19 +163,19 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "事件名称|event",
+          "name": "事件名称##event",
           "type": 4,
           "comment": "要监听的事件"
         },
         {
-          "name": "生物|inst|0",
+          "name": "生物##inst##0",
           "type": 5,
           "comment": "绑定的生物，如果没有连线就是施法者"
         }
       ],
       "outputs": [
         {
-          "name": "|flow",
+          "name": "##flow",
           "type": 0,
           "comment": "子节点"
         }
@@ -194,7 +194,7 @@
       ],
       "outputs": [
         {
-          "name": "|flow",
+          "name": "##flow",
           "type": 0,
           "comment": "子节点"
         },

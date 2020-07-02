@@ -44,6 +44,7 @@ enum COMMANDTYPE
 	MAINMENU,
 	DISPLAYMAINMENU,
 	MAINMENUCLICK,
+	ADDPIN,
 	DISPLAYNODE = 1000,
 };
 
@@ -88,6 +89,7 @@ struct ConfNode
 
 union Value
 {
+	bool bool_;
 	int int_;
 	double double_;
 	ui_string str_;
