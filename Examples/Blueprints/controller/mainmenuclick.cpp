@@ -7,6 +7,7 @@
 #include "view/seqeuemediator.h"
 #include "view/conditionmediator.h"
 #include "view/listenmediator.h"
+#include "view/countermediator.h"
 void mainmenuclick::execute(PureMVC::INotification* note)
 {
 	PureMVC::IFacade *facade = this->getFacade();
@@ -30,6 +31,9 @@ void mainmenuclick::execute(PureMVC::INotification* note)
 		break;
 	case NODETYPE::LISTEN:
 		mediator = new listenmediator(n->id.Get());
+		break;
+	case NODETYPE::REPEATED:
+		mediator = new countermediator(n->id.Get());
 		break;
 	default:
 		break;

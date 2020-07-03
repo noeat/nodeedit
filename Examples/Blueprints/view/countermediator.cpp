@@ -65,37 +65,42 @@ void countermediator::handleNotification(PureMVC::INotification* notification)
 	ImGui::Spring(0); 
 	HelpMarker(node->comment);
 	ImGui::TextUnformatted(node->name);	
+	ImGui::Dummy(ImVec2(0, 20));
 	ImGui::Spring(1);
-	ImGui::Dummy(ImVec2(0, 14));
-	ImGui::Spring(2);
-	ImGui::Spring(3);
+
 	builder->EndHeader();
 	
 	auto alpha = ImGui::GetStyle().Alpha;
 
-	for (auto& pin : node->inputs)
+	builder->Input(node->inputs[0].id);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+	DrawPinIcon(node->inputs[0], false, (int)(alpha * 255));
+	HelpMarker2(node->inputs[0].comment);
+	ImGui::Spring(0);
+	ImGui::PopStyleVar();
+	builder->EndInput();
+
+	builder->Input(node->inputs[1].id);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+	DrawPinIcon(node->inputs[1], false, (int)(alpha * 255));
+	HelpMarker2(node->inputs[1].comment);
+	if (node->inputs[1].links.empty())
 	{
-		builder->Input(pin.id);
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-		DrawPinIcon(pin, false, (int)(alpha * 255));
-		HelpMarker2(pin.comment);
-		if (pin.type == PinType::Bool)
-		{
-			if (pin.links.empty())
-			{
-				ImGui::Checkbox(pin.name, &pin.value.bool_);
-			}
-			else
-			{
-				ImGui::TextUnformatted(pin.name, ImGui::FindRenderedTextEnd(pin.name));
-			}			
-		}
-		ImGui::Spring(0);
-		ImGui::PopStyleVar();
-		builder->EndInput();
+		ImGui::PushItemWidth(60);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+		ImGui::InputInt(node->inputs[1].name, &node->inputs[1].value.int_, 1, 10);
+		ImGui::PopStyleVar(1);
+		ImGui::PopItemWidth();
 	}
+	else
+	{
+		ImGui::TextUnformatted(node->inputs[1].name, ImGui::FindRenderedTextEnd(node->inputs[1].name));
+	}
+	ImGui::Spring(0);
+	ImGui::PopStyleVar();
+	builder->EndInput();
+
 	
-		
 	for (auto& output : node->outputs)
 	{
 		builder->Output(output.id);
