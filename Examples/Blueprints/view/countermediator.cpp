@@ -86,10 +86,11 @@ void countermediator::handleNotification(PureMVC::INotification* notification)
 	HelpMarker2(node->inputs[1].comment);
 	if (node->inputs[1].links.empty())
 	{
-		ImGui::PushItemWidth(60);
+		ImGui::PushItemWidth(50);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(1, 1));
 		ImGui::InputInt(node->inputs[1].name, &node->inputs[1].value.int_, 1, 10);
-		ImGui::PopStyleVar(1);
+		ImGui::PopStyleVar(2);
 		ImGui::PopItemWidth();
 	}
 	else
