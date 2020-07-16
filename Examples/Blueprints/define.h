@@ -45,6 +45,7 @@ enum COMMANDTYPE
 	DISPLAYMAINMENU,
 	MAINMENUCLICK,
 	ADDPIN,
+	DISPLAYLINK,
 	DISPLAYNODE = 1000,
 };
 
@@ -91,7 +92,7 @@ union Value
 {
 	bool bool_;
 	int int_;
-	double double_;
+	float float_;
 	ui_string str_;
 };
 

@@ -8,6 +8,10 @@
 #include "view/conditionmediator.h"
 #include "view/listenmediator.h"
 #include "view/countermediator.h"
+#include "view/waitmediator.h"
+#include "view/eventwaitmediator.h"
+#include "view/eventadaptermediator.h"
+#include "view/actionmediator.h"
 void mainmenuclick::execute(PureMVC::INotification* note)
 {
 	PureMVC::IFacade *facade = this->getFacade();
@@ -34,6 +38,18 @@ void mainmenuclick::execute(PureMVC::INotification* note)
 		break;
 	case NODETYPE::REPEATED:
 		mediator = new countermediator(n->id.Get());
+		break;
+	case NODETYPE::WAIT:
+		mediator = new waitmediator(n->id.Get());
+		break;
+	case NODETYPE::EVENTWAIT:
+		mediator = new eventwaitmediator(n->id.Get());
+		break;
+	case NODETYPE::EVENTADPTOR:
+		mediator = new eventadaptermediator(n->id.Get());
+		break;
+	case NODETYPE::ACTION:
+		mediator = new actionmediator(n->id.Get());
 		break;
 	default:
 		break;

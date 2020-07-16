@@ -1,4 +1,4 @@
-#include "countermediator.h"
+#include "eventadaptermediator.h"
 #include "define.h"
 #include "imgui_node_editor.h"
 #include "model/language.h"
@@ -14,13 +14,13 @@ ImColor GetIconColor(PinType type);
 
 void DrawPinIcon(const Pin& pin, bool connected, int alpha);
 
-countermediator::countermediator(int nodeid)
+eventadaptermediator::eventadaptermediator(int nodeid)
 	:PureMVC::Mediator(id2mediatorname(nodeid)), nodeid_(nodeid)
 {
 	
 }
 
-std::vector<int> countermediator::listNotificationInterests()
+std::vector<int> eventadaptermediator::listNotificationInterests()
 {
 	return std::vector<int>{COMMANDTYPE::DISPLAYNODE + this->nodeid_};
 }
@@ -52,14 +52,14 @@ static void HelpMarker2(const char* desc)
 	}
 }
 
-void countermediator::handleNotification(PureMVC::INotification* notification)
+void eventadaptermediator::handleNotification(PureMVC::INotification* notification)
 {
 	std::pair<util::BlueprintNodeBuilder*, Node*> *item = 
 		(std::pair<util::BlueprintNodeBuilder*, Node*>*)notification->getBody();
 	PureMVC::IFacade* facade = this->getFacade();
 	auto builder = item->first;
 	auto node = item->second;
-	assert(node != nullptr && node->type == NODETYPE::REPEATED);
+	assert(node != nullptr && node->type == NODETYPE::EVENTADPTOR);
 	builder->Begin(node->id);	
 	builder->Header(node->color);		
 	ImGui::Spring(0); 
@@ -79,31 +79,7 @@ void countermediator::handleNotification(PureMVC::INotification* notification)
 	ImGui::Spring(0);
 	ImGui::PopStyleVar();
 	builder->EndInput();
-
-	builder->Input(node->inputs[1].id);
-	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-	DrawPinIcon(node->inputs[1], false, (int)(alpha * 255));
-	HelpMarker2(node->inputs[1].comment);
-	if (node->inputs[1].links.empty())
-	{
-		ImGui::BeginVertical("inputint");
-		ImGui::PushItemWidth(45);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(1, 1));
-		ImGui::InputInt(node->inputs[1].name, &node->inputs[1].value.int_, 1, 10);
-		ImGui::PopStyleVar(2);
-		ImGui::PopItemWidth();
-		ImGui::EndVertical();
-	}
-	else
-	{
-		ImGui::TextUnformatted(node->inputs[1].name, ImGui::FindRenderedTextEnd(node->inputs[1].name));
-	}
-	ImGui::Spring(0);
-	ImGui::PopStyleVar();
-	builder->EndInput();
-
-	
+			
 	for (auto& output : node->outputs)
 	{
 		builder->Output(output.id);
@@ -119,12 +95,12 @@ void countermediator::handleNotification(PureMVC::INotification* notification)
 }
 
 
-void countermediator::onRegister()
+void eventadaptermediator::onRegister()
 {
 	
 }
 
-void countermediator::onRemove()
+void eventadaptermediator::onRemove()
 {
 	
 }

@@ -1,10 +1,10 @@
-﻿{
+{
   "workspacedir": "",
   "confignode": [
     {
       "name": "技能##%d",
       "type": 1,
-      "comment": "",
+      "comment": "技能流程入口节点，每个这样的节点代表一个技能流程",
       "outputs": [
         {
           "name": "入口##flow",
@@ -139,7 +139,7 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "等待时长(s)##wait",
+          "name": "时间(s)##wait",
           "type": 3,
           "comment": "等待时间，单位(s)"
         }
@@ -168,7 +168,7 @@
           "comment": "要监听的事件"
         },
         {
-          "name": "生物##inst##0",
+          "name": "绑定的对象##inst##0",
           "type": 5,
           "comment": "绑定的生物，如果没有连线就是施法者"
         }
@@ -182,9 +182,9 @@
       ]
     },
     {
-      "name": "事件适配器",
+      "name": "事件适配器1",
       "type": 203,
-      "comment": "由事件监听节点出口的子节点，用来萃取事件data的参数",
+      "comment": "由事件监听节点出口的子节点，用来萃取事件data的参数 (入口:事件)",
       "inputs": [
         {
           "name": "",
@@ -201,7 +201,31 @@
         {
           "name": "事件数据(data)",
           "type": 5,
-          "comment": "由listenforevent执行函数的data"
+          "comment": "由listenforevent执行的data"
+        }
+      ]
+    },
+    {
+      "name": "事件适配器2",
+      "type": 203,
+      "comment": "由事件监听节点出口的子节点，用来萃取事件data的参数 (入口:流程)",
+      "inputs": [
+        {
+          "name": "",
+          "type": 0,
+          "comment": "事件触发后入口节点"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "##flow",
+          "type": 0,
+          "comment": "子节点"
+        },
+        {
+          "name": "事件数据(data)",
+          "type": 5,
+          "comment": "由listenforevent执行的data"
         }
       ]
     },
@@ -216,7 +240,7 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "Entity",
+          "name": "执行对象",
           "type": 5,
           "comment": "绑定的生物，默认(施法者)"
         },
@@ -239,7 +263,7 @@
           "comment": "进入脉冲"
         },
         {
-          "name": "Entity",
+          "name": "执行对象",
           "type": 5,
           "comment": "绑定的生物，默认(施法者)"
         },

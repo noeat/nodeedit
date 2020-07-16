@@ -24,9 +24,14 @@ public:
 	Node* getnode(int id) { return nodes_.find(id) == nodes_.end() ? nullptr : nodes_[id]; }
 	const Node* getnode(int id) const { return const_cast<mainboardproxy*>(this)->getnode(id); }
 
+	void registerPin(Node* node);
+	void unregisterPin(Node* node);
+	Pin* GetPin(int pinid);
+	
 private:
 	bool showstyleeditor_;
 	mutable int  next_;
 	std::map<int, Node*> nodes_;
+	std::map<int, Pin*> pins_;
 	std::vector<Node*> skills_;
 };

@@ -7,6 +7,7 @@
 #include "model/language.h"
 #include "view/mainmediator.h"
 #include "view/mainmeunmediator.h"
+#include "view/linkmediator.h"
 
 void loading::execute(PureMVC::INotification* note)
 {
@@ -15,7 +16,8 @@ void loading::execute(PureMVC::INotification* note)
 	facade->registerProxy(new mainboardproxy());
 	facade->registerMediator(new mainmediator());
 	facade->registerMediator(new mainmeunmediator());
-	
+	facade->registerMediator(new linkmediator());
+
 	settingproxy* setting = dynamic_cast<settingproxy*>(
 		facade->retrieveProxy(settingproxy::NAME));
 	assert(setting != nullptr);

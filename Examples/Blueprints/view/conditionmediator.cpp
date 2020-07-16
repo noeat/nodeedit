@@ -83,7 +83,10 @@ void conditionmediator::handleNotification(PureMVC::INotification* notification)
 		{
 			if (pin.links.empty())
 			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 2));
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(3, 2));
 				ImGui::Checkbox(pin.name, &pin.value.bool_);
+				ImGui::PopStyleVar(2);
 			}
 			else
 			{

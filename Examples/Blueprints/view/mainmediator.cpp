@@ -49,6 +49,15 @@ void mainmediator::handleNotification(PureMVC::INotification* notification)
 			}
 		}
 
+		if (!maindata->nodes().empty())
+		{
+			/*std::pair<ed::PinId, ed::PinId> link;
+			if (ed::QueryNewLink(&link.first, &link.second))
+			{*/
+				facade->sendNotification(COMMANDTYPE::DISPLAYLINK);
+			//}
+		}
+		
 		ImGui::SetCursorScreenPos(cursorTopLeft);
 	}
 

@@ -48,7 +48,7 @@ Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 		}
 		else if (pin.type == PinType::Float)
 		{
-			pin.value.double_ = 0.0;
+			pin.value.float_ = 0.0;
 		}
 		else if (pin.type == PinType::Object)
 		{
@@ -70,7 +70,7 @@ Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 		set_ui_str(pin.name, item.name);
 		set_ui_str(pin.comment, item.comment);
 		pin.type = (PinType)item.type;
-		pin.kind = PinKind::Input;
+		pin.kind = PinKind::Output;
 		if (pin.type == PinType::Int)
 		{
 			pin.value.int_ = 0;
@@ -81,7 +81,7 @@ Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 		}
 		else if (pin.type == PinType::Float)
 		{
-			pin.value.double_ = 0.0;
+			pin.value.float_ = 0.0;
 		}
 		else if (pin.type == PinType::Object)
 		{
@@ -96,10 +96,43 @@ Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 	}
 
 	this->nodes_[node->id.Get()] = node;
+	this->registerPin(node);
 	if (conf->type == NODETYPE::ENTRY)
 	{
 		this->skills_.push_back(node);
 	}
 
 	return node;
+}
+
+void mainboardproxy::registerPin(Node* node)
+{
+	for (auto& pin : node->inputs)
+	{
+		this->pins_[pin.id.Get()] = &pin;
+	}
+
+	for (auto& pin : node->outputs)
+	{
+		this->pins_[pin.id.Get()] = &pin;
+	}
+}
+
+void mainboardproxy::unregisterPin(Node* node)
+{
+	for (auto& pin : node->inputs)
+	{
+		this->pins_.erase(pin.id.Get());
+	}
+
+	for (auto& pin : node->outputs)
+	{
+		this->pins_.erase(pin.id.Get());
+	}
+}
+
+Pin* mainboardproxy::GetPin(int pinid)
+{
+	return this->pins_.find(pinid) == this->pins_.end() ?
+		nullptr : this->pins_.find(pinid)->second;
 }

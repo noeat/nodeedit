@@ -27,4 +27,5 @@ void addpin::execute(PureMVC::INotification* note)
 	pin.kind = PinKind::Output;
 	snprintf(pin.comment, sizeof(pin.comment), language->getstr("branch"), node->outputs.size() + 1);
 	node->outputs.push_back(pin);
+	proxy->registerPin(node);
 }

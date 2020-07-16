@@ -83,6 +83,22 @@ static void HelpMarker2(const char* desc)
 		ImGui::EndTooltip(); ed::Resume();
 	}
 }
+
+static char buff[20];
+static void SkillIDTip(int skillid)
+{
+	if (ImGui::IsItemHovered())
+	{
+		ed::Suspend();
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		snprintf(buff, 20, "%d", skillid);
+		ImGui::TextUnformatted(buff);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip(); ed::Resume();
+	}
+}
+
 void entrymediator::handleNotification(PureMVC::INotification* notification)
 {
 	std::pair<util::BlueprintNodeBuilder*, Node*> *item = 
@@ -94,13 +110,14 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 	builder->Begin(node->id);
 	builder->Header(node->color);
 	ImGui::Spring(0);
-	//HelpMarker(node->comment);
+	HelpMarker(node->comment);
 	//ImGui::TextUnformatted(node->name);
 	ImGui::PushItemWidth(30);
 	ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 	ImGui::DragInt("", &node->skillid, 1, 0, 100000, node->name);
 	ImGui::PopTextWrapPos();
 	ImGui::PopItemWidth();
+	SkillIDTip(node->skillid);
 	//HelpMarker(node->comment);
 	ImGui::Spring(1);
 	ImGui::Dummy(ImVec2(0, 14));
