@@ -141,6 +141,7 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 			if (ImGui::InvisibleButton("save", ImVec2((float)saveIconWidth, (float)saveIconHeight)))
 			{
 				node->saved = true;
+				facade->sendNotification(COMMANDTYPE::SAVESKILL, node);
 			}				
 
 			if (ImGui::IsItemActive())
@@ -162,7 +163,7 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 		{
 			if (ImGui::InvisibleButton("restore", ImVec2((float)restoreIconWidth, (float)restoreIconHeight)))
 			{
-				
+				facade->sendNotification(COMMANDTYPE::OPENSKILL, node);
 			}
 
 			if (ImGui::IsItemActive())
