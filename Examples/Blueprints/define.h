@@ -123,6 +123,7 @@ struct Node
 	bool	   show;
 	ImVec2	   position;
 	int		   skillid;
+	bool	   saved;
 	std::vector<Pin> inputs;
 	std::vector<Pin> outputs;
 };

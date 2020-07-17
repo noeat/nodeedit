@@ -6,6 +6,8 @@
 #include "Application.h"
 #include <ax/Builders.h>
 #include <ax/Math2D.h>
+#include <set>
+#include <list>
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
@@ -122,14 +124,46 @@ void linkmediator::handleNotification(PureMVC::INotification* notification)
 					{
 						startPin->links.push_back(endPin);
 						endPin->links.push_back(startPin);
+						
+						if (startPin->node->skillid > 0)
+						{
+							std::list<Node*> open;
+							std::set<Node*> close;
+							open.push_back(endPin->node);
+							close.insert(startPin->node);
+							while (!open.empty())
+							{
+								auto n = open.front();
+								n->skillid = startPin->node->skillid;
+								open.pop_front();
+								close.insert(n);
+								for (auto& pin : n->outputs)
+								{
+									for (auto& link : pin.links)
+									{
+										if (close.count(link->node) == 0)
+										{
+											open.push_back(link->node);
+										}
+									}
+								}
+							}
+							
+							for (auto& node : proxy->skills())
+							{
+								if (node->skillid == startPin->node->skillid)
+								{
+									const_cast<Node*>(node)->saved = false;
+								}							
+							}
+						}						
 					}
 				}
 			}
 		}		
 	}
 	
-	ed::EndCreate();
-	
+	ed::EndCreate();	
 }
 
 

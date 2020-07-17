@@ -42,7 +42,14 @@ void deletemediator::handleNotification(PureMVC::INotification* notification)
 			{
 				auto pin = proxy->GetPin(linkId.Get());
 				if (pin)
-				{
+				{				
+					for (auto& node : proxy->skills())
+					{
+						if (node->skillid == pin->node->skillid)
+						{
+							const_cast<Node*>(node)->saved = false;
+						}
+					}
 					assert(pin->links.size() == 1);
 					pin->links[0]->links.erase(std::remove(
 						pin->links[0]->links.begin(),

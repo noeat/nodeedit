@@ -30,6 +30,7 @@ Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 	node->type = conf->type;
 	node->show = true;
 	node->position = pos;
+	node->saved = false;
 	for (auto& item : conf->inputs)
 	{
 		Pin pin;

@@ -6,6 +6,8 @@
 #include <ax/Builders.h>
 #include <ax/Widgets.h>
 #include <ax/Drawing.h>
+#include <list>
+#include <set>
 namespace util = ax::NodeEditor::Utilities;
 static const int            s_PinIconSize = 14;
 ImColor GetIconColor(PinType type)
@@ -114,7 +116,31 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 	//ImGui::TextUnformatted(node->name);
 	ImGui::PushItemWidth(30);
 	ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-	ImGui::DragInt("", &node->skillid, 1, 0, 100000, node->name);
+	if (ImGui::DragInt("", &node->skillid, 1, 0, 100000, node->name))
+	{
+		int skillid = node->skillid;
+		node->saved = false;
+		std::list<Node*> open;
+		std::set<Node*> close;
+		open.push_back(node);
+		while (!open.empty())
+		{
+			auto n = open.front();
+			n->skillid = skillid;
+			open.pop_front();
+			close.insert(n);
+			for (auto& pin : n->outputs)
+			{
+				for (auto& link : pin.links)
+				{
+					if (close.count(link->node) == 0)
+					{
+						open.push_back(link->node);
+					}
+				}
+			}
+		}
+	}
 	ImGui::PopTextWrapPos();
 	ImGui::PopItemWidth();
 	SkillIDTip(node->skillid);
