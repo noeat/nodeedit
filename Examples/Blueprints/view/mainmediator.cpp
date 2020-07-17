@@ -56,6 +56,8 @@ void mainmediator::handleNotification(PureMVC::INotification* notification)
 			{*/
 				facade->sendNotification(COMMANDTYPE::DISPLAYLINK);
 			//}
+				
+					facade->sendNotification(COMMANDTYPE::DISPLAYDELETE);
 		}
 		
 		ImGui::SetCursorScreenPos(cursorTopLeft);

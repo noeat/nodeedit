@@ -14,6 +14,7 @@ public:
 	bool showstyleeditor() const { return showstyleeditor_; }
 
 	Node* addnode(const ConfNode* conf, const ImVec2& pos);
+	bool  removenode(Node* node);
 
 	int next() const { return ++this->next_; }
 	const static std::string NAME;
@@ -25,7 +26,7 @@ public:
 	const Node* getnode(int id) const { return const_cast<mainboardproxy*>(this)->getnode(id); }
 
 	void registerPin(Node* node);
-	void unregisterPin(Node* node);
+	void unregisterPin(const Node* node);
 	Pin* GetPin(int pinid);
 	
 private:

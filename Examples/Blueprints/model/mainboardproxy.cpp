@@ -1,5 +1,6 @@
 #include "mainboardproxy.h"
 #include "common.h"
+#include <algorithm>
 
 const std::string mainboardproxy::NAME = "mainboardproxy";
 mainboardproxy::mainboardproxy()
@@ -118,7 +119,7 @@ void mainboardproxy::registerPin(Node* node)
 	}
 }
 
-void mainboardproxy::unregisterPin(Node* node)
+void mainboardproxy::unregisterPin(const Node* node)
 {
 	for (auto& pin : node->inputs)
 	{
@@ -135,4 +136,35 @@ Pin* mainboardproxy::GetPin(int pinid)
 {
 	return this->pins_.find(pinid) == this->pins_.end() ?
 		nullptr : this->pins_.find(pinid)->second;
+}
+
+bool mainboardproxy::removenode(Node* node)
+{
+	assert(node != nullptr);
+	auto iter = this->nodes_.find(node->id.Get());
+	assert(iter != this->nodes_.end());
+	this->unregisterPin(node);
+	for (auto& pin : node->inputs)
+	{
+		for (auto& link : pin.links)
+		{
+			link->links.erase(std::remove(
+				link->links.begin(),
+				link->links.end(),
+				&pin), link->links.end());
+		}
+	}
+
+	for (auto& pin : node->outputs)
+	{
+		for (auto& link : pin.links)
+		{
+			link->links.erase(std::remove(
+				link->links.begin(),
+				link->links.end(),
+				&pin), link->links.end());
+		}
+	}
+	this->nodes_.erase(iter);
+	return true;
 }
