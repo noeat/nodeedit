@@ -17,6 +17,10 @@ static bool Splitter(bool split_vertically, float thickness, float* size1, float
 	return SplitterBehavior(bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
 }
 
+extern const int            s_PinIconSize;
+extern ImTextureID          s_HeaderBackground;
+extern ImTextureID          s_SaveIcon;
+extern ImTextureID          s_RestoreIcon;
 
 const std::string leftpanemediator::NAME = "leftpanemediator"
 ;
@@ -47,7 +51,11 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 		ed::NavigateToContent();
 	
 	ImGui::Spring(0.0f);
-	
+	if (ImGui::Button("Show Flow"))
+	{
+		facade->sendNotification(COMMANDTYPE::SHOWFLOW);
+	}
+
 	ImGui::Spring();
 	if (ImGui::Button("Edit Style"))
 	{

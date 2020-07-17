@@ -9,11 +9,11 @@
 const std::string mainmediator::NAME = "mainmediator";
 
 namespace util = ax::NodeEditor::Utilities;
-static const int            s_PinIconSize = 24;
-static ImTextureID          s_HeaderBackground = nullptr;
+const int            s_PinIconSize = 24;
+ImTextureID          s_HeaderBackground = nullptr;
 //static ImTextureID          s_SampleImage = nullptr;
-static ImTextureID          s_SaveIcon = nullptr;
-static ImTextureID          s_RestoreIcon = nullptr;
+ImTextureID          s_SaveIcon = nullptr;
+ImTextureID          s_RestoreIcon = nullptr;
 
 
 
