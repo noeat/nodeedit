@@ -18,8 +18,10 @@
 #include "controller/mainmeun.h"
 #include "controller/mainmenuclick.h"
 #include "controller/addpin.h"
+#include "controller/saveskill.h"
 #include "common.h"
 #include "define.h"
+
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
@@ -109,6 +111,7 @@ void Application_Initialize()
 	facade->registerCommand<mainmeun>(COMMANDTYPE::MAINMENU);
 	facade->registerCommand<mainmenuclick>(COMMANDTYPE::MAINMENUCLICK);
 	facade->registerCommand<addpin>(COMMANDTYPE::ADDPIN);
+	facade->registerCommand<saveskill>(COMMANDTYPE::SAVESKILL);
 	facade->sendNotification(COMMANDTYPE::STARTUP);
 }
 
