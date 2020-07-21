@@ -70,7 +70,7 @@ void workspacemediator::handleNotification(PureMVC::INotification* notification)
 				open.lpstrFile = buff;
 				open.lpstrFile[0] = 0;
 				open.nMaxFile = sizeof(buff);
-				open.lpstrFilter = ".exe";
+				open.lpstrFilter = "All(*.*)\0*.*\0Program(*.exe)\0*.exe\0";
 				open.nFilterIndex = 1;
 				open.Flags = OFN_PATHMUSTEXIST | OFN_READONLY;
 				if (GetOpenFileNameA(&open) == TRUE)
