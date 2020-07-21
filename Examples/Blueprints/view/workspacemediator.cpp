@@ -9,7 +9,7 @@ const std::string workspacemediator::NAME = "workspacemediator";
 workspacemediator::workspacemediator()
 	:PureMVC::Mediator(workspacemediator::NAME)
 {
-
+	strncpy(this->notepad_, "C:\\Windows\\notepad.exe", sizeof("C:\\Windows\\notepad.exe"));
 }
 
 std::vector<int> workspacemediator::listNotificationInterests()
@@ -41,7 +41,7 @@ void workspacemediator::handleNotification(PureMVC::INotification* notification)
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x * 0.9f);
 			ImGui::InputText("", buff_, 260);
 			ImGui::SameLine();
-			if (ImGui::Button("..."))
+			if (ImGui::Button("...##1"))
 			{
 				BROWSEINFO  bi;
 				bi.hwndOwner = NULL;
@@ -57,18 +57,46 @@ void workspacemediator::handleNotification(PureMVC::INotification* notification)
 					SHGetPathFromIDList(pidl, buff_);					
 				}
 			}
+		
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x * 0.9f);
+			ImGui::InputText("", notepad_, 260);
+			ImGui::SameLine();
+			if (ImGui::Button("...##2"))
+			{
+				char buff[260];
+				::OPENFILENAMEA open;
+				memset(&open, 0, sizeof(open));
+				open.lStructSize = sizeof(open);
+				open.lpstrFile = buff;
+				open.lpstrFile[0] = 0;
+				open.nMaxFile = sizeof(buff);
+				open.lpstrFilter = ".exe";
+				open.nFilterIndex = 1;
+				open.Flags = OFN_PATHMUSTEXIST | OFN_READONLY;
+				if (GetOpenFileNameA(&open) == TRUE)
+				{
+					strncpy(notepad_, buff, 260);
+					::SetCurrentDirectoryA(this->workspace_);
+				}
+			}
 			ImGui::NewLine();
 			ImGui::SameLine(0, (ImGui::GetContentRegionAvail().x - 200) /2);
 			if (ImGui::Button("OK", ImVec2(80, 16)))
 			{
+				std::filesystem::path pp(this->notepad_);
 				std::filesystem::path p(this->buff_);
 				if (!std::filesystem::exists(p))
 				{
 					memset(buff_, 0, sizeof(buff_));
 				}
+				else if (!std::filesystem::exists(pp))
+				{
+					strncpy(this->notepad_, "C:\\Windows\\notepad.exe", sizeof("C:\\Windows\\notepad.exe"));
+				}
 				else
 				{
-					facade->sendNotification(COMMANDTYPE::LAODING, (void*)this->buff_);
+					std::pair<const char*, const char*> pair(this->buff_, this->notepad_);
+					facade->sendNotification(COMMANDTYPE::LAODING, (void*)&pair);
 				}				
 			}
 
@@ -83,12 +111,25 @@ void workspacemediator::handleNotification(PureMVC::INotification* notification)
 	}
 	else if (name == COMMANDTYPE::SETTING)
 	{
-		strncpy(buff_, (const char*)body, 260);
+		std::pair<const char*, const char*> *pa = (std::pair<const char*, const char*>*)body;
+		strncpy(buff_, (const char*)pa->first, 260);
 		std::filesystem::path p(this->buff_);
 		if (!std::filesystem::exists(p))
 		{
 			memset(buff_, 0, sizeof(buff_));
 		}
+		
+		if (pa->second[0] != 0)
+		{
+			strncpy(notepad_, (const char*)pa->second, 260);
+			std::filesystem::path pp(pa->second);
+			if (!std::filesystem::exists(pp))
+			{
+				strncpy(notepad_, (const char*)pa->second, 260);
+			}
+		}
+
+		::GetCurrentDirectoryA(260, this->workspace_);		
 	}
 }
 

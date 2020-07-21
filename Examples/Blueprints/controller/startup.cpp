@@ -13,5 +13,6 @@ void startup::execute(PureMVC::INotification* note)
 	facade->registerProxy(setting);
 	facade->registerProxy(new languageproxy());
 	facade->registerMediator(new workspacemediator());
-	facade->sendNotification(COMMANDTYPE::SETTING, (void*)setting->workspace().c_str());
+	std::pair<const char*, const char*> p(setting->workspace().c_str(), setting->notepad().c_str());
+	facade->sendNotification(COMMANDTYPE::SETTING, (void*)&p);
 }

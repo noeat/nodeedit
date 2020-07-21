@@ -18,4 +18,6 @@ public:
 
 private:
 	char buff_[260];
+	char notepad_[260];
+	char workspace_[260];
 };

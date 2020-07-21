@@ -261,7 +261,7 @@ public:
 			rapidjson::Value jsnode;
 			jsnode.SetArray();
 
-			for (auto& link : node->outputs[0].links)
+			for (auto& link : node->outputs[1].links)
 			{
 				assert(idict.find(link->node->id.Get()) != idict.end());
 				int nodeid = idict.find(link->node->id.Get())->second;

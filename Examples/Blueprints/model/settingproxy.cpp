@@ -4,6 +4,7 @@
 #include <fstream>
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
+#include <rapidjson/prettywriter.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <model/entrynode.h>
 #include <algorithm>
@@ -30,6 +31,11 @@ void settingproxy::onRegister()
 	if (doc.HasMember("workspacedir") && doc["workspacedir"].IsString())
 	{
 		this->workspace_ = doc["workspacedir"].GetString();
+	}
+
+	if (doc.HasMember("notepad") && doc["notepad"].IsString())
+	{
+		this->notepad_ = doc["notepad"].GetString();
 	}
 
 	if (!doc.HasMember("confignode") || !doc["confignode"].IsArray())
@@ -88,9 +94,9 @@ void settingproxy::onRemove()
 	this->menus_.clear();
 }
 
-void settingproxy::saveworkspace(const char* str)
+void settingproxy::saveworkspace(const char* str, const char* notepad)
 {
-	if (this->workspace_ != std::string(str))
+	if (this->workspace_ != std::string(str) || this->notepad_ != std::string(notepad))
 	{
 		const char* filepath = "setting.json";
 		std::ifstream iff(filepath);
@@ -111,11 +117,14 @@ void settingproxy::saveworkspace(const char* str)
 		}
 		auto& value = doc["workspacedir"];
 		value.SetString(str, strlen(str));
+
+		auto& jsnotepad = doc["notepad"];
+		jsnotepad.SetString(notepad, strlen(notepad));
 		
 		std::ofstream ofs(filepath);
 		rapidjson::OStreamWrapper osw(ofs);
 
-		rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
+		rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 		doc.Accept(writer);
 	}
 	

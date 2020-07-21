@@ -23,8 +23,9 @@ void loading::execute(PureMVC::INotification* note)
 	settingproxy* setting = dynamic_cast<settingproxy*>(
 		facade->retrieveProxy(settingproxy::NAME));
 	assert(setting != nullptr);
-	setting->saveworkspace((char*)note->getBody());
-	loadworkspace((char*)note->getBody());
+	setting->saveworkspace(((std::pair<const char*, const char*>*)note->getBody())->first,
+		((std::pair<const char*, const char*>*)note->getBody())->second);
+	loadworkspace(((std::pair<const char*, const char*>*)note->getBody())->first);
 	facade->removeMediator(workspacemediator::NAME);
 }
 
