@@ -26,7 +26,7 @@ void loading::execute(PureMVC::INotification* note)
 	setting->saveworkspace(((std::pair<const char*, const char*>*)note->getBody())->first,
 		((std::pair<const char*, const char*>*)note->getBody())->second);
 	loadworkspace(((std::pair<const char*, const char*>*)note->getBody())->first);
-	facade->removeMediator(workspacemediator::NAME);
+	delete facade->removeMediator(workspacemediator::NAME);
 }
 
 void loading::loadworkspace(const char* dir)

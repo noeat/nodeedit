@@ -21,6 +21,7 @@ static ImTextureID          s_SaveIcon = nullptr;
 static ImTextureID          s_RestoreIcon = nullptr;
 
 
+ImColor GetIconColor(PinType type);
 
 linkmediator::linkmediator()
 	:PureMVC::Mediator(linkmediator::NAME)
@@ -30,140 +31,208 @@ linkmediator::linkmediator()
 
 std::vector<int> linkmediator::listNotificationInterests()
 {
-	return std::vector<int>{COMMANDTYPE::DISPLAYLINK};
+	return std::vector<int>{COMMANDTYPE::DISPLAYLINK, COMMANDTYPE::SHOWFLOW};
 }
 
 void linkmediator::handleNotification(PureMVC::INotification* notification)
 {
+	int name = notification->getName();
+	int type = notification->getType();
+	void* body = notification->getBody();
 	PureMVC::IFacade *facade = this->getFacade();
-	std::pair<ed::PinId, ed::PinId> *item =
-		(std::pair<ed::PinId, ed::PinId>*)notification->getBody();
-
 	mainboardproxy* proxy = dynamic_cast<mainboardproxy*>(
 		facade->retrieveProxy(mainboardproxy::NAME));
 	assert(proxy);
 
-	for (auto& item : proxy->nodes())
+	if (name == COMMANDTYPE::DISPLAYLINK)
 	{
-		if (!item.second->outputs.empty())
+		std::pair<ed::PinId, ed::PinId> *item =
+			(std::pair<ed::PinId, ed::PinId>*)notification->getBody();		
+
+		for (auto& item : proxy->nodes())
 		{
-			for (auto opin : item.second->outputs)
+			if (!item.second->outputs.empty())
 			{
-				for (auto pin : opin.links)
+				for (auto opin : item.second->outputs)
 				{
-					ed::LinkId linkid(pin->id.Get());
-					ed::Link(linkid, opin.id, pin->id, ImColor(255, 255, 255), 2);
-				}				
-			}
-		}
-	}
-
-	if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
-	{
-		auto showLabel = [](const char* label, ImColor color)
-		{
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
-			auto size = ImGui::CalcTextSize(label);
-
-			auto padding = ImGui::GetStyle().FramePadding;
-			auto spacing = ImGui::GetStyle().ItemSpacing;
-
-			ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(spacing.x, -spacing.y));
-
-			auto rectMin = ImGui::GetCursorScreenPos() - padding;
-			auto rectMax = ImGui::GetCursorScreenPos() + size + padding;
-
-			auto drawList = ImGui::GetWindowDrawList();
-			drawList->AddRectFilled(rectMin, rectMax, color, size.y * 0.15f);
-			ImGui::TextUnformatted(label);
-		};
-
-			
-		ed::PinId startPinId = 0, endPinId = 0;
-		if (ed::QueryNewLink(&startPinId, &endPinId))
-		{
-			auto startPin = proxy->GetPin(startPinId.Get());
-			auto endPin = proxy->GetPin(endPinId.Get());
-
-			if (startPin->kind == PinKind::Input)
-			{
-				std::swap(startPin, endPin);
-				std::swap(startPinId, endPinId);
-			}
-
-			if (startPin && endPin)
-			{
-				if (endPin == startPin)
-				{
-					ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
-				}
-				else if (endPin->kind == startPin->kind)
-				{
-					showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
-					ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
-				}
-				else if (endPin->node == startPin->node)
-				{
-					showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
-					ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
-				}
-				else if (endPin->type != startPin->type)
-				{
-					showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
-					ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
-				}
-				else if (!endPin->links.empty())
-				{
-					showLabel("x input cant links > 1", ImColor(45, 32, 32, 180));
-					ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
-				}
-				else
-				{
-					showLabel("+ Create Link", ImColor(32, 45, 32, 180));
-					if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
+					for (auto pin : opin.links)
 					{
-						startPin->links.push_back(endPin);
-						endPin->links.push_back(startPin);
-						
-						if (startPin->node->skillid > 0)
-						{
-							std::list<Node*> open;
-							std::set<Node*> close;
-							open.push_back(endPin->node);
-							close.insert(startPin->node);
-							while (!open.empty())
-							{
-								auto n = open.front();
-								n->skillid = startPin->node->skillid;
-								open.pop_front();
-								close.insert(n);
-								for (auto& pin : n->outputs)
-								{
-									for (auto& link : pin.links)
-									{
-										if (close.count(link->node) == 0)
-										{
-											open.push_back(link->node);
-										}
-									}
-								}
-							}
-							
-							for (auto& node : proxy->skills())
-							{
-								if (node->skillid == startPin->node->skillid)
-								{
-									const_cast<Node*>(node)->saved = false;
-								}							
-							}
-						}						
+						ed::LinkId linkid(pin->id.Get());
+						ed::Link(linkid, opin.id, pin->id, GetIconColor(pin->type), 2);
 					}
 				}
 			}
-		}		
+		}
+
+		if (!this->flows_.empty())
+		{
+			auto dur = std::chrono::steady_clock::now() - this->flowtime_;
+			if (dur > std::chrono::milliseconds(500))
+			{				
+				std::set<int> flows;
+				for (auto id : this->flows_)
+				{
+					auto node = proxy->getnode(id);
+					if (node)
+					{
+						/*if (!node->outputs.empty())
+						{
+							flows_.insert(node->outputs[0].links[0]->node->id.Get());
+						}*/
+
+						for (auto opin : node->outputs)
+						{
+							if (opin.type == PinType::Flow && !opin.links.empty())
+							{
+								flows.insert(opin.links[0]->node->id.Get());
+							}
+
+							for (auto pin : opin.links)
+							{
+								ed::LinkId linkid(pin->id.Get());
+								ed::Flow(linkid);
+							}
+						}
+					}
+				}
+
+				this->flowtime_ = std::chrono::steady_clock::now();
+				this->flows_ = std::move(flows);
+			}
+		}
+
+		if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
+		{
+			auto showLabel = [](const char* label, ImColor color)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
+				auto size = ImGui::CalcTextSize(label);
+
+				auto padding = ImGui::GetStyle().FramePadding;
+				auto spacing = ImGui::GetStyle().ItemSpacing;
+
+				ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(spacing.x, -spacing.y));
+
+				auto rectMin = ImGui::GetCursorScreenPos() - padding;
+				auto rectMax = ImGui::GetCursorScreenPos() + size + padding;
+
+				auto drawList = ImGui::GetWindowDrawList();
+				drawList->AddRectFilled(rectMin, rectMax, color, size.y * 0.15f);
+				ImGui::TextUnformatted(label);
+			};
+
+
+			ed::PinId startPinId = 0, endPinId = 0;
+			if (ed::QueryNewLink(&startPinId, &endPinId))
+			{
+				auto startPin = proxy->GetPin(startPinId.Get());
+				auto endPin = proxy->GetPin(endPinId.Get());
+
+				if (startPin->kind == PinKind::Input)
+				{
+					std::swap(startPin, endPin);
+					std::swap(startPinId, endPinId);
+				}
+
+				if (startPin && endPin)
+				{
+					if (endPin == startPin)
+					{
+						ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+					}
+					else if (endPin->kind == startPin->kind)
+					{
+						showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
+						ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+					}
+					else if (endPin->node == startPin->node)
+					{
+						showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
+						ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+					}
+					else if (endPin->type != startPin->type)
+					{
+						showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
+						ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
+					}
+					else if (!endPin->links.empty() || (startPin->type == PinType::Flow && !startPin->links.empty()))
+					{
+						showLabel("x input cant links > 1", ImColor(45, 32, 32, 180));
+						ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
+					}
+					else
+					{
+						showLabel("+ Create Link", ImColor(32, 45, 32, 180));
+						if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
+						{
+							startPin->links.push_back(endPin);
+							endPin->links.push_back(startPin);
+
+							if (startPin->node->skillid > 0)
+							{
+								std::list<Node*> open;
+								std::set<Node*> close;
+								open.push_back(endPin->node);
+								close.insert(startPin->node);
+								while (!open.empty())
+								{
+									auto n = open.front();
+									n->skillid = startPin->node->skillid;
+									open.pop_front();
+									close.insert(n);
+									for (auto& pin : n->outputs)
+									{
+										for (auto& link : pin.links)
+										{
+											if (close.count(link->node) == 0)
+											{
+												open.push_back(link->node);
+											}
+										}
+									}
+								}
+
+								for (auto& node : proxy->skills())
+								{
+									if (node->skillid == startPin->node->skillid)
+									{
+										const_cast<Node*>(node)->saved = false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		ed::EndCreate();
 	}
-	
-	ed::EndCreate();	
+	else
+	{
+		std::vector<ed::NodeId>* selected = static_cast<std::vector<ed::NodeId>*>(body);
+		if (selected && selected->size() > 0)
+		{
+			this->flows_.clear();	
+			flowtime_ = std::chrono::steady_clock::now() - std::chrono::seconds(3);
+			for (auto nodeid : *selected)
+			{
+				auto node = proxy->getnode(nodeid.Get());
+				while (node)
+				{
+					if (!node->inputs.empty() && !node->inputs[0].links.empty())
+					{
+						node = node->inputs[0].links[0]->node;
+					}
+					else
+					{
+						this->flows_.insert(node->id.Get());
+						break;
+					}
+				}
+			}			
+		}
+	}	
 }
 
 

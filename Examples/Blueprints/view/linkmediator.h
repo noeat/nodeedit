@@ -1,6 +1,7 @@
 #pragma once
 #include "pmvcpp.h"
-
+#include <set>
+#include <chrono>
 class linkmediator : public PureMVC::Mediator
 {
 public:
@@ -18,4 +19,6 @@ public:
 
 private:
 	char buff_[260];
+	std::set<int> flows_;
+	std::chrono::steady_clock::time_point flowtime_;
 };

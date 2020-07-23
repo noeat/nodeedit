@@ -98,6 +98,8 @@ void settingproxy::saveworkspace(const char* str, const char* notepad)
 {
 	if (this->workspace_ != std::string(str) || this->notepad_ != std::string(notepad))
 	{
+		this->workspace_ = str;
+		this->notepad_ = notepad;
 		const char* filepath = "setting.json";
 		std::ifstream iff(filepath);
 		if (!iff.good())

@@ -167,5 +167,8 @@ bool mainboardproxy::removenode(Node* node)
 		}
 	}
 	this->nodes_.erase(iter);
+	this->skills_.erase(std::remove(
+		this->skills_.begin(), this->skills_.end(), node), this->skills_.end());
+	delete node;
 	return true;
 }

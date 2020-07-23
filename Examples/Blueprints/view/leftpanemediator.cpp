@@ -51,10 +51,21 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 	if (ImGui::Button("Zoom to Content"))
 		ed::NavigateToContent();
 	
+	std::vector<ed::NodeId> selectedNodes;
+	std::vector<ed::LinkId> selectedLinks;
+	selectedNodes.resize(ed::GetSelectedObjectCount());
+	selectedLinks.resize(ed::GetSelectedObjectCount());
+
+	int nodeCount = ed::GetSelectedNodes(selectedNodes.data(), static_cast<int>(selectedNodes.size()));
+	int linkCount = ed::GetSelectedLinks(selectedLinks.data(), static_cast<int>(selectedLinks.size()));
+
+	selectedNodes.resize(nodeCount);
+	selectedLinks.resize(linkCount);
+
 	ImGui::Spring(0.0f);
 	if (ImGui::Button("Show Flow"))
 	{
-		facade->sendNotification(COMMANDTYPE::SHOWFLOW);
+		facade->sendNotification(COMMANDTYPE::SHOWFLOW, &selectedNodes);
 	}
 
 	ImGui::Spring();
@@ -69,17 +80,6 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 	mainboardproxy* proxy = dynamic_cast<mainboardproxy*>(
 		facade->retrieveProxy(mainboardproxy::NAME));
 	assert(proxy);
-
-	std::vector<ed::NodeId> selectedNodes;
-	std::vector<ed::LinkId> selectedLinks;
-	selectedNodes.resize(ed::GetSelectedObjectCount());
-	selectedLinks.resize(ed::GetSelectedObjectCount());
-
-	int nodeCount = ed::GetSelectedNodes(selectedNodes.data(), static_cast<int>(selectedNodes.size()));
-	int linkCount = ed::GetSelectedLinks(selectedLinks.data(), static_cast<int>(selectedLinks.size()));
-
-	selectedNodes.resize(nodeCount);
-	selectedLinks.resize(linkCount);
 
 	int saveIconWidth = Application_GetTextureWidth(s_SaveIcon);
 	int saveIconHeight = Application_GetTextureWidth(s_SaveIcon);

@@ -79,6 +79,7 @@ void workspacemediator::handleNotification(PureMVC::INotification* notification)
 					::SetCurrentDirectoryA(this->workspace_);
 				}
 			}
+			ImGui::Separator();
 			ImGui::NewLine();
 			ImGui::SameLine(0, (ImGui::GetContentRegionAvail().x - 200) /2);
 			if (ImGui::Button("OK", ImVec2(80, 16)))
