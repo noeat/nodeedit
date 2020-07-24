@@ -186,6 +186,38 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 		ImGui::PopID();
 	}
 	ImGui::Unindent();
+
+
+	ImGui::GetWindowDrawList()->AddRectFilled(
+		ImGui::GetCursorScreenPos(),
+		ImGui::GetCursorScreenPos() + ImVec2(leftpane, ImGui::GetTextLineHeight()),
+		ImColor(ImGui::GetStyle().Colors[ImGuiCol_HeaderActive]), ImGui::GetTextLineHeight() * 0.25f);
+	ImGui::Spacing(); ImGui::SameLine();
+	ImGui::TextUnformatted("Selection Editor");
+	ImGui::BeginHorizontal("Selection Stats", ImVec2(leftpane, 0));
+
+	ImGui::Spring();
+	if (ImGui::Button("Deselect All"))
+		ed::ClearSelection();
+	ImGui::EndHorizontal();
+	ImGui::Indent();
+	for (int i = 0; i < nodeCount; ++i) 
+	{
+		auto nodeid = selectedNodes[i].Get();
+		auto node = proxy->getnode(nodeid);
+		ImGui::GetWindowDrawList()->AddRectFilled(
+			ImGui::GetCursorScreenPos(),
+			ImGui::GetCursorScreenPos() + ImVec2(leftpane, ImGui::GetTextLineHeight()),
+			ImColor(ImGui::GetStyle().Colors[ImGuiCol_Tab]), ImGui::GetTextLineHeight() * 0.25f);
+		ImGui::Spacing(); ImGui::SameLine();
+		std::string name(node->name, ImGui::FindRenderedTextEnd(node->name) - node->name);
+		ImGui::Text("Node:%s  (%d)", name.c_str(), nodeid);
+	} 
+	
+	ImGui::Unindent();
+
+	
+
 	ImGui::EndChild();
 }
 

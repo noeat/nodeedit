@@ -7,6 +7,9 @@
 #include <ax/Widgets.h>
 #include <ax/Drawing.h>
 #include "imgui_internal.h"
+#include "common.h"
+#include "utiliti.h"
+
 namespace util = ax::NodeEditor::Utilities;
 static const int            s_PinIconSize = 14;
 ImColor GetIconColor(PinType type);
@@ -142,7 +145,7 @@ void actionmediator::handleNotification(PureMVC::INotification* notification)
 			{
 				ImGui::TextUnformatted(input.name, ImGui::FindRenderedTextEnd(input.name));
 			}
-		}
+		}		
 		else
 		{
 			ImGui::TextUnformatted(input.name, ImGui::FindRenderedTextEnd(input.name));
