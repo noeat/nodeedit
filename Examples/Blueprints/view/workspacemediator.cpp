@@ -105,6 +105,8 @@ void workspacemediator::handleNotification(PureMVC::INotification* notification)
 			if (ImGui::Button("Cancel", ImVec2(80, 16)))
 			{
 				exit(-1);
+				/*std::pair<const char*, const char*> pair("xxxxx", "3333333");
+				this->getFacade()->sendNotification(COMMANDTYPE::MESSAGEBOX, &pair);*/
 			}
 
 			ImGui::EndPopup();

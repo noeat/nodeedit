@@ -497,7 +497,16 @@ public:
 					rapidjson::Document checker;
 					if (checker.Parse(input.value.str_).HasParseError())
 					{
-
+						PureMVC::Facade* facade = PureMVC::Facade::getInstance("root");
+						std::pair<const char*, const char*> pair;
+						pair.first = "Save Skill Error";
+						char buff[1024];
+						snprintf(buff, 1024, "[%s | %s]-> Parse: [ %s ], Error: [%d].", t[0], tok[0], input.value.str_, checker.GetParseError());
+						pair.second = buff;
+						facade->sendNotification(COMMANDTYPE::MESSAGEBOX, &pair);
+						nodes.clear();
+						nodes.push_back(nullptr);
+						return nodes;
 					}
 					else
 					{
@@ -625,9 +634,14 @@ void saveskill::execute(PureMVC::INotification* note)
 	opend.push_back(node);
 	while (!opend.empty())
 	{
-		auto node = opend.back();
+		auto n = opend.back();
 		opend.pop_back();
-		auto items = ss[node->type]->serializ(node, doc, idict);
+		if (n == nullptr)
+		{
+			node->saved = false;
+			return;
+		}
+		auto items = ss[n->type]->serializ(n, doc, idict);
 		opend.insert(opend.end(), items.begin(), items.end());
 	}
 

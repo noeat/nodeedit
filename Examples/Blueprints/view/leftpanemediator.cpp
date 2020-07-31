@@ -9,6 +9,8 @@
 #include "common.h"
 #include "utiliti.h"
 #include <algorithm>
+#include <list>
+#include <set>
 
 static bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f)
 {
@@ -229,7 +231,41 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 		snprintf(buff, 128, "Node:%s (%d)", name.c_str(), nodeid);
 		if (node->type == NODETYPE::ENTRY)
 		{
-			ImGui::Text(buff);
+			if (ImGui::TreeNode(buff))
+			{
+				ImGui::Columns(2, "property");
+				ImGui::Separator();
+				ImGui::TextWrapped(language->getstr("skillname"));
+				ImGui::NextColumn();
+				if (ImGui::DragInt("##skillid", &node->skillid, 1, 0, 10000000, "%d"))
+				{
+					int skillid = node->skillid;
+					node->saved = false;
+					std::list<Node*> open;
+					std::set<Node*> close;
+					open.push_back(node);
+					while (!open.empty())
+					{
+						auto n = open.front();
+						n->skillid = skillid;
+						open.pop_front();
+						close.insert(n);
+						for (auto& pin : n->outputs)
+						{
+							for (auto& link : pin.links)
+							{
+								if (close.count(link->node) == 0)
+								{
+									open.push_back(link->node);
+								}
+							}
+						}
+					}
+				}
+				ImGui::Columns(1);
+				ImGui::Separator();
+				ImGui::TreePop();
+			}
 		}
 		else
 		{

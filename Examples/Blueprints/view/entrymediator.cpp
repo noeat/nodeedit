@@ -8,6 +8,7 @@
 #include <ax/Drawing.h>
 #include <list>
 #include <set>
+#include <imgui_internal.h>
 namespace util = ax::NodeEditor::Utilities;
 static const int            s_PinIconSize = 14;
 ImColor GetIconColor(PinType type)
@@ -113,8 +114,8 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 	builder->Header(node->color);
 	ImGui::Spring(0);
 	HelpMarker(node->comment);
-	//ImGui::TextUnformatted(node->name);
-	ImGui::PushItemWidth(30);
+	ImGui::TextUnformatted(node->name, ImGui::FindRenderedTextEnd(node->name));
+	/*ImGui::PushItemWidth(30);
 	ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 	if (ImGui::DragInt("", &node->skillid, 1, 0, 100000, node->name))
 	{
@@ -142,7 +143,7 @@ void entrymediator::handleNotification(PureMVC::INotification* notification)
 		}
 	}
 	ImGui::PopTextWrapPos();
-	ImGui::PopItemWidth();
+	ImGui::PopItemWidth();*/
 	SkillIDTip(node->skillid);
 	//HelpMarker(node->comment);
 	ImGui::Spring(1);

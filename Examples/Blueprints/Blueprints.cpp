@@ -20,6 +20,7 @@
 #include "controller/addpin.h"
 #include "controller/saveskill.h"
 #include "controller/openskill.h"
+#include "controller/messagebox.h"
 #include "common.h"
 #include "define.h"
 
@@ -114,7 +115,10 @@ void Application_Initialize()
 	facade->registerCommand<addpin>(COMMANDTYPE::ADDPIN);
 	facade->registerCommand<saveskill>(COMMANDTYPE::SAVESKILL);
 	facade->registerCommand<openskill>(COMMANDTYPE::OPENSKILL);
+	facade->registerCommand<messagebox>(COMMANDTYPE::MESSAGEBOX);
 	facade->sendNotification(COMMANDTYPE::STARTUP);
+	/*std::pair<const char*, const char*> pair("xxxxx", "3333333");
+	facade->sendNotification(COMMANDTYPE::MESSAGEBOX, &pair);*/
 }
 
 void Application_Finalize()
