@@ -50,6 +50,7 @@ enum COMMANDTYPE
 	SHOWFLOW,
 	SAVESKILL,
 	OPENSKILL,
+	SHOWOBJEDIT,
 	DISPLAYNODE = 1000,
 };
 
@@ -128,4 +129,11 @@ struct Node
 	bool	   saved;
 	std::vector<Pin> inputs;
 	std::vector<Pin> outputs;
+};
+
+struct EditObj
+{
+	int type;
+	int pinid;
+	ImGuiID opid;
 };

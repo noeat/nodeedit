@@ -5,7 +5,7 @@
 #include "model/mainboardproxy.h"
 #include "Application.h"
 #include <ax/Builders.h>
-
+#include "imgui_internal.h"
 const std::string mainmediator::NAME = "mainmediator";
 
 namespace util = ax::NodeEditor::Utilities;
@@ -15,68 +15,112 @@ ImTextureID          s_HeaderBackground = nullptr;
 ImTextureID          s_SaveIcon = nullptr;
 ImTextureID          s_RestoreIcon = nullptr;
 
-
+extern const char* arrar_obj_edit_name;
 
 mainmediator::mainmediator()
 	:PureMVC::Mediator(mainmediator::NAME)
 {
-
+	editobj_.type = 0;
+	editobj_.pinid = 0;
+	editobj_.opid = 0;
 }
 
 std::vector<int> mainmediator::listNotificationInterests()
 {
-	return std::vector<int>{COMMANDTYPE::DISPLAYMAIN};
+	return std::vector<int>{COMMANDTYPE::DISPLAYMAIN, COMMANDTYPE::SHOWOBJEDIT};
 }
 
 void mainmediator::handleNotification(PureMVC::INotification* notification)
 {
+	int name = notification->getName();
+	int type = notification->getType();
+	void* body = notification->getBody();
 	PureMVC::IFacade *facade = this->getFacade();
-	ImGui::SameLine(0.0f, 12.0f);
-	ed::Begin("Node editor");
+	if (name == COMMANDTYPE::DISPLAYMAIN)
 	{
-		auto cursorTopLeft = ImGui::GetCursorScreenPos();		
-		util::BlueprintNodeBuilder builder(s_HeaderBackground, Application_GetTextureWidth(s_HeaderBackground), Application_GetTextureHeight(s_HeaderBackground));
-
 		mainboardproxy* maindata = dynamic_cast<mainboardproxy*>(
 			facade->retrieveProxy(mainboardproxy::NAME));
 		assert(maindata);
-		for (auto iter = maindata->nodes().begin(); iter != maindata->nodes().end(); ++iter)
+		ImGui::SameLine(0.0f, 12.0f);
+		ed::Begin("Node editor");
 		{
-			if (iter->second->show)
+			auto cursorTopLeft = ImGui::GetCursorScreenPos();
+			util::BlueprintNodeBuilder builder(s_HeaderBackground, Application_GetTextureWidth(s_HeaderBackground), Application_GetTextureHeight(s_HeaderBackground));
+						
+			for (auto iter = maindata->nodes().begin(); iter != maindata->nodes().end(); ++iter)
 			{
-				auto item = std::make_pair(&builder, iter->second);
-				facade->sendNotification(COMMANDTYPE::DISPLAYNODE + iter->first, &item);
+				if (iter->second->show)
+				{
+					auto item = std::make_pair(&builder, iter->second);
+					facade->sendNotification(COMMANDTYPE::DISPLAYNODE + iter->first, &item);
+				}
+			}
+
+			if (!maindata->nodes().empty())
+			{
+				/*std::pair<ed::PinId, ed::PinId> link;
+				if (ed::QueryNewLink(&link.first, &link.second))
+				{*/
+				facade->sendNotification(COMMANDTYPE::DISPLAYLINK);
+				//}
+
+				facade->sendNotification(COMMANDTYPE::DISPLAYDELETE);
+			}
+
+			ImGui::SetCursorScreenPos(cursorTopLeft);
+		}
+
+		auto openPopupPosition = ImGui::GetMousePos();
+		ed::Suspend();
+		if (ed::ShowBackgroundContextMenu())
+		{
+			ImGui::OpenPopup("mainmenu");
+		}
+		else if (this->editobj_.type != 0)
+		{
+			auto pin = maindata->GetPin(this->editobj_.pinid);
+			if (pin == nullptr)
+			{
+				editobj_.type = 0;
+				editobj_.pinid = 0;
+				editobj_.opid = 0;
+			}
+			else
+			{
+				if (this->editobj_.type == 1)
+				{
+					ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings;
+					if (ImGui::BeginPopupEx(this->editobj_.opid, flags))
+					{
+						//ImGui::PushItemWidth(360);
+						ImGui::Text("         Input Json Object Format         ");
+						//ImGui::PopItemWidth();
+						ImGui::Separator();
+						ImGui::InputTextMultiline("##1", pin->value.str_, IM_ARRAYSIZE(pin->value.str_), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16));
+						ImGui::EndPopup();
+					}
+					else
+					{
+						editobj_.type = 0;
+						editobj_.pinid = 0;
+						editobj_.opid = 0;
+					}
+				}
 			}
 		}
+		ed::Resume();
 
-		if (!maindata->nodes().empty())
+		if (ImGui::IsPopupOpen("mainmenu"))
 		{
-			/*std::pair<ed::PinId, ed::PinId> link;
-			if (ed::QueryNewLink(&link.first, &link.second))
-			{*/
-				facade->sendNotification(COMMANDTYPE::DISPLAYLINK);
-			//}
-				
-					facade->sendNotification(COMMANDTYPE::DISPLAYDELETE);
+			facade->sendNotification(COMMANDTYPE::MAINMENU);
 		}
-		
-		ImGui::SetCursorScreenPos(cursorTopLeft);
-	}
 
-	auto openPopupPosition = ImGui::GetMousePos();
-	ed::Suspend();
-	if (ed::ShowBackgroundContextMenu())
-	{
-		ImGui::OpenPopup("mainmenu");		
+		ed::End();
 	}
-	ed::Resume();
-
-	if (ImGui::IsPopupOpen("mainmenu"))
-	{
-		facade->sendNotification(COMMANDTYPE::MAINMENU);
+	else {
+		EditObj* pair = static_cast<EditObj*>(body);
+		editobj_ = *pair;
 	}
-
-	ed::End();
 }
 
 

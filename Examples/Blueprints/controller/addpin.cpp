@@ -20,6 +20,11 @@ void addpin::execute(PureMVC::INotification* note)
 		facade->retrieveProxy(languageproxy::NAME));
 	assert(language != nullptr);
 
+	if (node->outputs.empty())
+	{
+		node->outputs.reserve(20);
+	}
+
 	Pin pin;
 	pin.id = proxy->next();
 	pin.node = node;

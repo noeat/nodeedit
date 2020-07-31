@@ -13,7 +13,7 @@
 namespace util = ax::NodeEditor::Utilities;
 static const int            s_PinIconSize = 14;
 ImColor GetIconColor(PinType type);
-
+const char* arrar_obj_edit_name = "editarray";
 
 void DrawPinIcon(const Pin& pin, bool connected, int alpha);
 
@@ -148,7 +148,42 @@ void actionmediator::handleNotification(PureMVC::INotification* notification)
 		}		
 		else
 		{
-			ImGui::TextUnformatted(input.name, ImGui::FindRenderedTextEnd(input.name));
+			//ImGui::TextUnformatted(input.name, ImGui::FindRenderedTextEnd(input.name));
+			int len = strlen(input.name);
+			const char* end = ImGui::FindRenderedTextEnd(input.name) + 2;
+			if (end >= input.name + len)
+			{
+				ImGui::TextUnformatted(input.name, end-2);
+			}
+			else
+			{
+				int type = atoi(end);
+				if (type == 0)
+				{
+					ImGui::TextUnformatted(input.name, end - 2);
+				}
+				else if (type == 1)
+				{
+					if (ImGui::Button(input.name))
+					{
+						ed::Suspend();
+						//ImGui::OpenPopup(arrar_obj_edit_name);
+						ImGuiContext& g = *GImGui;
+						auto id = g.CurrentWindow->GetID(arrar_obj_edit_name);
+						ImGui::OpenPopupEx(id);
+						ed::Resume();
+						EditObj pair;
+						pair.type = 1;
+						pair.pinid = input.id.Get();
+						pair.opid = id;// (1, input.id.Get(), id);
+						facade->sendNotification(COMMANDTYPE::SHOWOBJEDIT, &pair);
+					}					
+				}
+				else if (type == 2)
+				{
+
+				}
+			}
 		}
 
 		ImGui::Spring(0);

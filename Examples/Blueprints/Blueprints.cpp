@@ -91,7 +91,7 @@ static void UpdateTouch()
 
 const char* Application_GetName()
 {
-    return "Blueprints";
+    return "Skill Editor";
 }
 
 void Application_Initialize()

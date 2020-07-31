@@ -3,8 +3,12 @@
 #include "imgui_node_editor.h"
 #include "Application.h"
 #include "model/mainboardproxy.h"
+#include "model/language.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
+#include "common.h"
+#include "utiliti.h"
+#include <algorithm>
 
 static bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f)
 {
@@ -201,6 +205,16 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 		ed::ClearSelection();
 	ImGui::EndHorizontal();
 	ImGui::Indent();
+
+	languageproxy* language = dynamic_cast<languageproxy*>(
+		facade->retrieveProxy(languageproxy::NAME));
+	assert(language);
+	using nodetype_t = decltype(*selectedNodes.begin());
+	std::sort(selectedNodes.begin(), selectedNodes.end(), [](nodetype_t& l, nodetype_t& r) 
+	{
+		return l.Get() < r.Get();
+	});
+
 	for (int i = 0; i < nodeCount; ++i) 
 	{
 		auto nodeid = selectedNodes[i].Get();
@@ -211,7 +225,108 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 			ImColor(ImGui::GetStyle().Colors[ImGuiCol_Tab]), ImGui::GetTextLineHeight() * 0.25f);
 		ImGui::Spacing(); ImGui::SameLine();
 		std::string name(node->name, ImGui::FindRenderedTextEnd(node->name) - node->name);
-		ImGui::Text("Node:%s  (%d)", name.c_str(), nodeid);
+		char buff[128];
+		snprintf(buff, 128, "Node:%s (%d)", name.c_str(), nodeid);
+		if (node->type == NODETYPE::ENTRY)
+		{
+			ImGui::Text(buff);
+		}
+		else
+		{
+			if (ImGui::TreeNode(buff))
+			{
+				assert(node->inputs.size() > 0);
+				ImGui::Columns(2, "property");
+				ImGui::Separator();
+				ImGui::TextWrapped(language->getstr("enterflow"));
+				ImGui::NextColumn();
+				if (node->inputs[0].links.size() > 0)
+				{
+					auto lastnode = node->inputs[0].links[0]->node;
+					std::string name(lastnode->name, ImGui::FindRenderedTextEnd(lastnode->name) - lastnode->name);
+					char buff[128];
+					snprintf(buff, 128, "-> Node:%s (%d)", name.c_str(), lastnode->id.Get());
+					ImGui::TextWrapped(buff);
+				}
+				else
+				{
+					ImGui::TextWrapped("");
+				}				
+				
+				ImGui::Columns(1);
+				for (int i = 1; i < node->inputs.size(); ++i)
+				{
+					auto& pin = node->inputs[i];
+					ImGui::Columns(2, "property");
+					ImGui::Separator();
+					std::string name(pin.name, ImGui::FindRenderedTextEnd(pin.name) - pin.name);
+					ImGui::TextWrapped(name.c_str());
+					ImGui::NextColumn();
+					if (pin.links.size() > 0)
+					{
+						auto lastnode = pin.links[0]->node;
+						std::string name(lastnode->name, ImGui::FindRenderedTextEnd(lastnode->name) - lastnode->name);
+						char buff[128];
+						snprintf(buff, 128, "-> Node:%s (%d)", name.c_str(), lastnode->id.Get());
+						ImGui::TextWrapped(buff);
+					}
+					else
+					{
+						if (pin.type == PinType::Bool)
+						{
+							if (pin.value.bool_)
+							{
+								ImGui::TextWrapped("True");
+							}
+							else
+							{
+								ImGui::TextWrapped("False");
+							}
+						}
+						else if (pin.type == PinType::Int)
+						{
+							ImGui::TextWrapped(std::to_string(pin.value.int_).c_str());
+						}
+						else if (pin.type == PinType::Float)
+						{
+							ImGui::TextWrapped(std::to_string(pin.value.float_).c_str());
+						}
+						else if (pin.type == PinType::String)
+						{
+							ImGui::TextWrapped(pin.value.str_);
+						}
+						else if (pin.type == PinType::Object)
+						{
+							tokenizer tok(pin.name, '#');
+							if (tok.size() > 2 && atoi(tok[2]) == 0)
+							{
+								ImGui::TextWrapped(language->getstr("instowner"));
+							}
+							else
+							{
+								ImGui::TextWrapped(pin.value.str_);
+							}
+						}
+					}
+					ImGui::Columns(1);
+				}
+/*
+				for (int i = 1; i < 10; ++i)
+				{
+					ImGui::Columns(2, "property");
+					ImGui::Separator();
+					ImGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
+					ImGui::TextWrapped("Hello Left");
+					ImGui::NextColumn();
+					ImGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
+					ImGui::TextWrapped("Hello Right");
+					ImGui::Columns(1);
+					ImGui::Separator();
+				}
+*/ImGui::Separator();
+				ImGui::TreePop();
+			}
+		}	
 	} 
 	
 	ImGui::Unindent();

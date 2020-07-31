@@ -1,6 +1,6 @@
 #pragma once
 #include "pmvcpp.h"
-
+#include "define.h"
 class mainmediator : public PureMVC::Mediator
 {
 public:
@@ -18,4 +18,5 @@ public:
 
 private:
 	char buff_[260];
+	EditObj editobj_;
 };

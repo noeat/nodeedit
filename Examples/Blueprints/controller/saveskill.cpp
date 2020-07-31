@@ -488,9 +488,24 @@ public:
 			}
 			else
 			{
-				if (tok.size() > 2)
+				if (tok.size() > 2 && atoi(tok[2]) == 0)
 				{
 					jsinput.PushBack(0, doc.GetAllocator());
+				}
+				else if (tok.size() > 2 && atoi(tok[2]) == 1)
+				{
+					rapidjson::Document checker;
+					if (checker.Parse(input.value.str_).HasParseError())
+					{
+
+					}
+					else
+					{
+						rapidjson::Value v2;
+						v2.CopyFrom(checker, doc.GetAllocator());
+						jsinput.PushBack(v2, doc.GetAllocator());
+					}
+					//jsinput.PushBack(0, doc.GetAllocator());
 				}
 				else
 				{
