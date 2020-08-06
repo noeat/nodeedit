@@ -21,7 +21,8 @@ void mainmenuclick::execute(PureMVC::INotification* note)
 	assert(proxy);
 	Node* n = proxy->addnode(data->first, *data->second);
 	PureMVC::Mediator* mediator = nullptr;
-	switch (data->first->type)
+	int type = data->first->type < 300 ? data->first->type : 300;
+	switch (type)
 	{
 	case NODETYPE::ENTRY:
 		mediator = new entrymediator(n->id.Get());

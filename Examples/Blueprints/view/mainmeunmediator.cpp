@@ -75,26 +75,63 @@ void mainmeunmediator::handleNotification(PureMVC::INotification* notification)
 		}
 
 		ImGui::Separator();
-		if (ImGui::BeginMenu(proxy->getstr("actionmeun")))
+		std::vector<std::pair<int, int>> menus;
+		if (index < data->size())
 		{
+			int group = (*data)[index]->type;
+			int beg = index;
 			for (; index < data->size(); index++)
 			{
-				auto item = (*data)[index];
-				if (ImGui::MenuItem(item->name.c_str()))
+				if (group != (*data)[index]->type)
 				{
-					auto data = std::make_pair(item, &openPopupPosition);
-					this->sendNotification(COMMANDTYPE::MAINMENUCLICK, (void*)&data);
-				}
-					
-				if (!item->comment.empty())
-				{
-					ImGui::SameLine();
-					HelpMarker(item->comment.c_str());
+					std::pair<int, int> p;
+					p.first = beg;
+					p.second = index;
+					beg = index;
+					group = (*data)[index]->type;
+					menus.push_back(p);
 				}
 			}
-			ImGui::EndMenu();
-		}
 
+			std::pair<int, int> p;
+			p.first = beg;
+			p.second = index ;
+			menus.push_back(p);
+
+			for (auto p : menus)
+			{
+				if (p.first < p.second && p.first < data->size() && p.first >= 0)
+				{
+					int group = (*data)[p.first]->type ;
+					std::string str = std::string(std::string("actionmeun_") + std::to_string(group - 300));
+					if (ImGui::BeginMenu(proxy->getstr(str.c_str())))
+					{
+						for (int i = p.first; i < p.second; ++i)
+						{
+							auto item = (*data)[i];
+							if (item->type != group)
+							{
+								break;
+							}
+
+							if (ImGui::MenuItem(item->name.c_str()))
+							{
+								auto data = std::make_pair(item, &openPopupPosition);
+								this->sendNotification(COMMANDTYPE::MAINMENUCLICK, (void*)&data);
+							}
+
+							if (!item->comment.empty())
+							{
+								ImGui::SameLine();
+								HelpMarker(item->comment.c_str());
+							}
+						}
+						ImGui::EndMenu();
+					}
+				}
+			}
+		}
+		
 		ImGui::EndPopup();
 	}
 	ImGui::PopStyleVar();

@@ -102,7 +102,7 @@ void actionmediator::handleNotification(PureMVC::INotification* notification)
 				ImGui::PushItemWidth(60);
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 2));
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(3, 2));
-				ImGui::InputInt(input.name, &input.value.int_, 1, 10);
+				ImGui::DragInt(input.name, &input.value.int_, -100, 1000000);
 				ImGui::PopStyleVar(2);
 				ImGui::PopItemWidth();
 				ImGui::EndVertical();

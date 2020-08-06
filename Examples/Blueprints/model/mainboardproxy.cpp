@@ -27,7 +27,7 @@ Node* mainboardproxy::addnode(const ConfNode* conf, const ImVec2& pos)
 	node->id = this->next();
 	set_ui_str(node->name, conf->name);
 	set_ui_str(node->comment, conf->comment);
-	node->type = conf->type;
+	node->type = conf->type >= 300 ? 300 : conf->type;
 	node->show = true;
 	node->position = pos;
 	node->saved = false;

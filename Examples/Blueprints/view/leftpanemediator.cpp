@@ -199,7 +199,7 @@ void leftpanemediator::handleNotification(PureMVC::INotification* notification)
 		ImGui::GetCursorScreenPos() + ImVec2(leftpane, ImGui::GetTextLineHeight()),
 		ImColor(ImGui::GetStyle().Colors[ImGuiCol_HeaderActive]), ImGui::GetTextLineHeight() * 0.25f);
 	ImGui::Spacing(); ImGui::SameLine();
-	ImGui::TextUnformatted("Selection Editor");
+	ImGui::TextUnformatted("Selection Nodes");
 	ImGui::BeginHorizontal("Selection Stats", ImVec2(leftpane, 0));
 
 	ImGui::Spring();

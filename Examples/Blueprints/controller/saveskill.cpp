@@ -494,26 +494,36 @@ public:
 				}
 				else if (tok.size() > 2 && atoi(tok[2]) == 1)
 				{
-					rapidjson::Document checker;
-					if (checker.Parse(input.value.str_).HasParseError())
+					if (input.value.str_[0] != '\0')
 					{
-						PureMVC::Facade* facade = PureMVC::Facade::getInstance("root");
-						std::pair<const char*, const char*> pair;
-						pair.first = "Save Skill Error";
-						char buff[1024];
-						snprintf(buff, 1024, "[%s | %s]-> Parse: [ %s ], Error: [%d].", t[0], tok[0], input.value.str_, checker.GetParseError());
-						pair.second = buff;
-						facade->sendNotification(COMMANDTYPE::MESSAGEBOX, &pair);
-						nodes.clear();
-						nodes.push_back(nullptr);
-						return nodes;
+						rapidjson::Document checker;
+						if (checker.Parse(input.value.str_).HasParseError())
+						{
+							PureMVC::Facade* facade = PureMVC::Facade::getInstance("root");
+							std::pair<const char*, const char*> pair;
+							pair.first = "Save Skill Error";
+							char buff[1024];
+							snprintf(buff, 1024, "[%s | %s]-> Parse: [ %s ], Error: [%d].", t[0], tok[0], input.value.str_, checker.GetParseError());
+							pair.second = buff;
+							facade->sendNotification(COMMANDTYPE::MESSAGEBOX, &pair);
+							nodes.clear();
+							nodes.push_back(nullptr);
+							return nodes;
+						}
+						else
+						{
+							rapidjson::Value v2;
+							v2.CopyFrom(checker, doc.GetAllocator());
+							jsinput.PushBack(v2, doc.GetAllocator());
+						}
 					}
 					else
 					{
-						rapidjson::Value v2;
-						v2.CopyFrom(checker, doc.GetAllocator());
-						jsinput.PushBack(v2, doc.GetAllocator());
+						rapidjson::Value v;
+						v.SetNull();
+						jsinput.PushBack(v, doc.GetAllocator());
 					}
+					
 					//jsinput.PushBack(0, doc.GetAllocator());
 				}
 				else
